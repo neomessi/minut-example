@@ -1,0 +1,1 @@
+A minimum utility Node framework for modern apps that sets up in a minute

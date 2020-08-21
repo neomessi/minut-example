@@ -1,0 +1,15 @@
+{
+  "name": "minut",
+  "version": "1.0.0",
+  "description": "Minut framework",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "neomessi",
+  "license": "ISC",
+  "dependencies": {
+    "lowdb": "^1.0.0"
+  }
+}

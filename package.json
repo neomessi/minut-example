@@ -1,0 +1,25 @@
+{
+  "name": "minut-example",
+  "version": "1.0.0",
+  "description": "Minut framework demo",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "neomessi",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/preset-typescript": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "minut": "file:local_modules/minut",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-notifier": "^1.8.0"
+  },
+  "devDependencies": {
+    "webpack-shell-plugin": "^0.5.0"
+  }
+}

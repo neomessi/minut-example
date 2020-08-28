@@ -26,8 +26,10 @@ module.exports = function( globals, routes ) {
 
         const resourceExt = resource.split('.').pop();
 
-        // html files don't have static dist - they are generated dynamically
-        const resourceDir = resourceExt === 'html' ? this.globals.htmlSrcDir : this.globals.distDir;
+        let resourceDir = this.globals.distDir;
+        if ( resourceExt === 'html' ) {
+            resourceDir = ifound >= 0 ? this.globals.htmlSrcDir : this.globals.distDir + '/html';
+        }
 
         // response
         const encoding = resourceExt === 'html' ? 'utf8' : null; // need utf8 for string matching (data swapping)
@@ -37,11 +39,24 @@ module.exports = function( globals, routes ) {
 
             let subdata = resourceExt === 'html' ? bundler.autoSwapBundles(data) : data;
 
-            subdata = ifound >= 0 && this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...new consumer.Response(subdata)} ) : subdata;
+            if ( ifound >= 0 ) {
+                subdata = this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...new consumer.Response(subdata)} ) : subdata;
+
+                if ( this.routes[ifound].guard ) {
+                    const [allow, redir] = this.routes[ifound].guard();
+                    if ( !allow ) {
+                        if ( redir) {
+                            res.writeHead(302, { Location: redir } ).end();
+                        }
+                        res.writeHead(403).end();    
+                    }
+                }
+            }
 
             res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
 
         }catch (e) {
+            console.log(e);
             res.writeHead(404).end();
         }
     }

@@ -40,7 +40,9 @@ module.exports = function( globals, routes ) {
             let subdata = resourceExt === 'html' ? bundler.autoSwapBundles(data) : data;
 
             if ( ifound >= 0 ) {
-                subdata = this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...new consumer.Response(subdata)} ) : subdata;
+                const response = new consumer.Response(subdata);
+                this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response} ) : subdata;
+                subdata = response.body;
 
                 if ( this.routes[ifound].guard ) {
                     const [allow, redir] = this.routes[ifound].guard();

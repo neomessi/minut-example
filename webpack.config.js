@@ -6,6 +6,7 @@ const { NONAME } = require('dns');
 
 const path2jsSrc = path.join(__dirname, 'gui/web/src/script');
 const path2jsDist = path.join(__dirname, 'gui/web/dist/js');
+const path2fwUI = path.join(__dirname, 'local_modules/minut/lib/ui'); // ~*~ will change
 
 module.exports = {
   mode: 'none', // ~*~
@@ -14,6 +15,9 @@ module.exports = {
     start: path.join(path2jsSrc, 'start.js'),
     //   test: './src/test.js',
     tstest: path.join(path2jsSrc, 'tstest.ts'),
+
+    // framewwork
+    autoComponentRenderer: path.join(path2fwUI, 'autoComponentRenderer.js'),
   },
   output: {
     filename: '[name].[chunkhash].js',
@@ -31,7 +35,20 @@ module.exports = {
             // plugins: ['@babel/plugin-proposal-object-rest-spread']
           }
         }
-      }
+      },
+      {
+        test: /\.jsx?$/, // ~*~ not all js, just Renderers?
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react'],
+            plugins: ["wildcard"],
+            // plugins: ['@babel/plugin-proposal-object-rest-spread']
+            // ?~*~ @babel/core
+          }
+        }
+      },
     ]
   },
   plugins: [

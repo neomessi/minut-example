@@ -13,7 +13,8 @@ module.exports = {
     Response: function(body) {
         this.body = body;
         this.swapData = (key, val) => {
-            return this.body.replace("~`data:"+key+"`~", val)
+            const re = new RegExp("~`data:"+key+"`~", "g");
+            this.body = this.body.replace(re, val);
         }
     }
 }

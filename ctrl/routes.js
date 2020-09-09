@@ -11,7 +11,7 @@
  *      /gui/web/dist/html --> static* html files (public access) *NOTE: will still do autoswapping bundles
  *      /gui/web/src/html --> html files that: have special mapping/need preprocessing/have restricted access
  * 
- * ~*~ routes that start with /api/ will automatically set the response type to text/json // { url: '/api/info' },
+ * ~*~TODO: routes that start with /api/ will automatically set the response type to text/json // { url: '/api/info' },
  */
 const handlers = require('./handlers')
 const guards = require('./guards')
@@ -21,4 +21,5 @@ module.exports = [
     { url: '/login', page: 'login.html' },
     { url: '/start', page: 'start.html', handler: handlers.customHandler },
     { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '/login') },
+    { url: '/square', page: 'square.html', handler: handlers.squareHandler },
 ];

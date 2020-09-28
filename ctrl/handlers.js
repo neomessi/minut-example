@@ -7,7 +7,8 @@
 module.exports = {
 
     customHandler: (consumer) => {
-        consumer.swapData("username", consumer.params.url.name ? consumer.params.url.name : "Sir");
+        // consumer.swapData("username", consumer.params.url.name ? consumer.params.url.name : "Sir");
+        consumer.swapData("username", consumer.currentUserInfo.name ? consumer.currentUserInfo.name : "Sir");
     },
 
     squareHandler: (consumer) => {

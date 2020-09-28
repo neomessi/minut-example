@@ -41,21 +41,29 @@ module.exports = function( globals, routes ) {
 
             if ( ifound >= 0 ) {
                 const response = new consumer.Response(subdata);
-                this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response} ) : subdata;
-                subdata = response.body;
 
-                if ( this.routes[ifound].guard ) {
-                    const [allow, redir] = this.routes[ifound].guard();
-                    if ( !allow ) {
-                        if ( redir) {
-                            res.writeHead(302, { Location: redir } ).end();
+                // finish route in current user context
+                this.globals.getCurrentUserPromise().then( currentUser => {
+                    this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response, currentUserInfo: {...currentUser.info} } ) : subdata;
+                    subdata = response.body;
+
+                    if ( this.routes[ifound].guard ) {
+                        const [allow, redir] = this.routes[ifound].guard();
+                        if ( !allow ) {
+                            if ( redir) {
+                                res.writeHead(302, { Location: redir } ).end();
+                            }
+                            res.writeHead(403).end();    
                         }
-                        res.writeHead(403).end();    
                     }
-                }
-            }
 
-            res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
+                    res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
+                });
+
+            }
+            else {
+                res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
+            }
 
         }catch (e) {
             console.log(e);

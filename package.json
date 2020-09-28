@@ -4,8 +4,10 @@
   "description": "Minut framework demo",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "dev": "NODE_ENV=development node index.js",
+    "prod": "NODE_ENV=production node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "neomessi",
   "license": "ISC",
@@ -14,7 +16,9 @@
     "@babel/preset-typescript": "^7.10.4",
     "babel-loader": "^8.1.0",
     "babel-plugin-wildcard": "^6.0.0",
+    "dotenv": "^8.2.0",
     "minut": "file:local_modules/minut",
+    "mongodb": "^3.6.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "webpack": "^4.43.0",

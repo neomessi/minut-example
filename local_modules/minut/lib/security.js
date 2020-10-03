@@ -28,12 +28,6 @@ module.exports = function(mongodb, cookies) {
     this.mongodb = mongodb;
     this.cookies = cookies;
 
-    // ~*~ should move this outside of export ("private") and pass in mongodb - or just do new Promise() in provideCurrentUser
-    this._getUserInfo = async (pid) => {        
-        const doc = await this.mongodb.collection("users").findOne( { curPermitId: ObjectId(pid) } ); //~*~ , { info: 1}        
-        return doc;
-    }
-
     this.provideCurrentUser = () => {
         let usingPermitId = this.cookies.get(securityCookieName, { signed: true });
         
@@ -43,7 +37,9 @@ module.exports = function(mongodb, cookies) {
             this.cookies.set(securityCookieName, usingPermitId, { signed: true });            
         }
 
-        return this._getUserInfo(usingPermitId);
+        return new Promise((resolve) => {
+            resolve( this.mongodb.collection("users").findOne( { curPermitId: ObjectId(usingPermitId) } ) ); //~*~ , { info: 1}
+        });
     }    
 }
 

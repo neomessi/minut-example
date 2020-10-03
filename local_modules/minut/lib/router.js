@@ -44,7 +44,8 @@ module.exports = function( globals, routes ) {
 
                 // finish route in current user context
                 this.globals.getCurrentUserPromise().then( currentUser => {
-                    this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response, currentUserInfo: {...currentUser.info} } ) : subdata;
+                    const cuinfo = currentUser.info ? currentUser.info : {};
+                    this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response, currentUserInfo: { ...cuinfo } } ) : subdata;
                     subdata = response.body;
 
                     if ( this.routes[ifound].guard ) {

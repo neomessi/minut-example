@@ -11,15 +11,14 @@
  *      guard without redirect - will simply return 403:
  *      { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard },  
  * 
- *  ~*~will probably need to pass in consumer (at least response cookie?)
  */
 
 // const something = require('./lib/something')
 
 module.exports = {
 
-    customGuard: (url) => {        
-        return [Math.random() > 0.5, url];
+    customGuard: (url, currentUserInfo) => {
+        return [currentUserInfo.name, url];        
     },
 
 }

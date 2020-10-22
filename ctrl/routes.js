@@ -19,7 +19,8 @@ const guards = require('./guards')
 module.exports = [    
     { url: '/', page: 'index.html' },
     { url: '/login', page: 'login.html' },
+    { url: '/userinfo', page: 'userinfo.html', handler: handlers.userInfoHandler },
     { url: '/start', page: 'start.html', handler: handlers.customHandler },
-    { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '/login') },
+    { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '/userinfo') },
     { url: '/square', page: 'square.html', handler: handlers.squareHandler },
 ];

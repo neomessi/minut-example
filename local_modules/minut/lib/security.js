@@ -28,8 +28,10 @@ module.exports = function(mongodb, cookies) {
     this.mongodb = mongodb;
     this.cookies = cookies;
 
+    this.getCurrentUserPermitId = () => this.cookies.get(securityCookieName, { signed: true });
+
     this.provideCurrentUser = () => {
-        let usingPermitId = this.cookies.get(securityCookieName, { signed: true });
+        let usingPermitId = this.getCurrentUserPermitId();
         
         if ( !usingPermitId) {            
             usingPermitId = new ObjectId();

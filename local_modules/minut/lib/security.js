@@ -24,6 +24,12 @@ const ObjectId = require('mongodb').ObjectId;
 
 const securityCookieName = 'permitId';
 
+const getCookieExpDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 90); // ~*~ config
+    return date;
+}
+
 module.exports = function(mongodb, cookies) {
     this.mongodb = mongodb;
     this.cookies = cookies;
@@ -36,12 +42,11 @@ module.exports = function(mongodb, cookies) {
         if ( !usingPermitId) {            
             usingPermitId = new ObjectId();
             const collection = this.mongodb.collection("users").insertOne( { curPermitId: usingPermitId, info: {} } );
-            this.cookies.set(securityCookieName, usingPermitId, { signed: true });            
         }
+        this.cookies.set(securityCookieName, usingPermitId, { signed: true, /*overwrite: true,*/ expires: getCookieExpDate() });
 
         return new Promise((resolve) => {
             resolve( this.mongodb.collection("users").findOne( { curPermitId: ObjectId(usingPermitId) } ) ); //~*~ , { info: 1}
         });
     }    
 }
-

@@ -75,6 +75,8 @@ module.exports = function( globals, routes ) {
                             // avoided "pyramid of doom", but have to take just one step of doom
                             .then( (formdata) => {                            
                                 
+                                // ~*~ csrf check (npm)
+
                                 request.params.form = formdata;
 
                                 // ~*~ if no handler - "Wait a minut... no handler defined for POST"

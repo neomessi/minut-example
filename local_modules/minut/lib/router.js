@@ -2,13 +2,11 @@ const fs = require('fs')
 const utils = require('./utils')
 const consumer = require('./consumer')
 
-const ObjectId = require('mongodb').ObjectId; // ~*~NOT here
-
 module.exports = function( globals, routes ) {
     this.globals = globals;
     this.routes = routes,
 
-    this.route = (bundler, req, res) => {
+    this.route = (req, res, bundler, security) => {
 
         const [ fpath, qmap ] = utils.parseRequest(req);
 
@@ -43,24 +41,25 @@ module.exports = function( globals, routes ) {
 
         try {
             const data = fs.readFileSync([resourceDir, resource].join('/'), encoding);
-
+            
             let subdata = resourceExt === 'html' ? bundler.autoSwapBundles(data) : data;
 
             if ( ifound >= 0 ) {
-                const response = new consumer.Response(subdata);
-                let currentUserCurPermitId = 0;
+                const response = new consumer.Response(subdata);                
 
-                // finish route in current user context
-                this.globals.getCurrentUserPromise()
+                let currentUserPermitId = 0;
+                
+                // finish route in current user context                
+                security.provideCurrentUser()
                     .then( currentUser => {
-                        currentUserCurPermitId = currentUser.curPermitId;
-                        const cuinfo = currentUser.info ? currentUser.info : {};
-                        return cuinfo;
-                    }).then ( cuinfo => {
+                        console.log(currentUser);
 
+                        currentUserPermitId = currentUser.permitId;                        
+                        const cuinfo = currentUser.info ? currentUser.info : {};
+                        
                         // check guards
                         if ( this.routes[ifound].guard ) {
-                            const [allow, redir] = this.routes[ifound].guard(cuinfo);
+                            const [allow, redir] = this.routes[ifound].guard(cuinfo, currentUser.userName);
                             if ( !allow ) {
                                 if ( redir) {
                                     res.writeHead(302, { Location: redir } ).end();
@@ -69,74 +68,58 @@ module.exports = function( globals, routes ) {
                             }
                         }
 
-                        if ( req.method === 'POST') {
-
-                         formDataPromise
-                            // avoided "pyramid of doom", but have to take just one step of doom
-                            .then( (formdata) => {                            
-                                
-                                // ~*~ csrf check (npm)
-
-                                request.params.form = formdata;
-
-                                // ~*~ if no handler - "Wait a minut... no handler defined for POST"
-                                const cnsmr = {...request, ...response, currentUserInfo: { ...cuinfo } };
-                                
-                                // const cnsmrcopy = { ...cnsmr }; ~*~ use lodash.isequal to conditionally update
-                                
-                                this.routes[ifound].handler( cnsmr, this.globals.mongodb )
-                                                                
-                                this.globals.mongodb.collection("users").updateOne(
-                                    { curPermitId: ObjectId(currentUserCurPermitId) },
-                                    { $set: { "info" : cnsmr.currentUserInfo } }
-                                ).then( result => {                                    
-                                    // if ( result.matchedCount === 1 && result.modifiedCount === 1 ) {
-                                    //     console.log("update success!");                                        
-                                    // }else{
-                                    //     console.log("update FAILED!"); // ~*~throw
-                                    // }
-
-                                    if ( cnsmr.nextUrl ) {
-                                        res.writeHead(302, { Location: cnsmr.nextUrl } ).end();
-                                    }
-                                    else {
-                                        res.writeHead(302, { Location: fpath } ).end();
-                                    }
-
-                                /*
-                                this.routes[ifound].handler( {...request, ...response, currentUserInfo: { ...cuinfo } }, this.globals.mongodb )
-                                    .then( result => {
-                                        console.log(result);                                        
-                                        // modifiedCount: 1,
-                                        // upsertedId: null,
-                                        // upsertedCount: 0,
-                                        // matchedCount: 1
-                                        subdata = response.body;
-                                        res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
-                                    })
-                                */
-                                });
-                            });
-
-                        }
-                        else {
-                            this.routes[ifound].handler ? this.routes[ifound].handler( {...request, ...response, currentUserInfo: { ...cuinfo } } ) : subdata;
-                            subdata = response.body;
-                            res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
-
-                        }
+                        const cnsmr = {
+                            ...request,
+                            ...response,
+                            currentUserInfo: { ...cuinfo },
+                            currentUserName: currentUser.userName,
+                            security: {...security.consumerFuncs}
+                        };
                         
-                    }).catch(e => {
-                        console.log(e);
-                    }); // catch 500                   
+                        // ~*~ for api routes: json = this.routes[ifound].handler( cnsmr, this.globals.mongodb )
 
+                        if ( req.method === 'POST') {
+                            formDataPromise                            
+                                .then( (formdata) => { // avoided "pyramid of doom", but have to take just one step of doom
+                                    request.params.form = formdata;
+                                    // ~*~ csrf check (npm)                                
+
+                                    // if no handler will be caught and return 500 (should have handler defined for POST)
+                                    const p = this.routes[ifound].handler( cnsmr, this.globals.mongodb );
+
+                                    Promise.resolve(p).then(() => {
+                                        if ( cnsmr.nextUrl ) { // maybe for GETs as well?
+                                            res.writeHead(302, { Location: cnsmr.nextUrl } ).end();
+                                        }
+                                        else {
+                                            res.writeHead(302, { Location: fpath } ).end();
+                                        }
+
+                                    });
+
+                                });
+                        }
+                        // GET
+                        else {
+                            const p = this.routes[ifound].handler ? this.routes[ifound].handler( cnsmr, this.globals.mongodb ) : null;
+                            // have to wait even though handlers don't return anything in case handler function is await-ing anything
+                            Promise.resolve(p).finally(()=> {                                
+                                res.writeHead(200, getHeaderData(resourceExt)).end( response.body );
+                            });
+                        }
+
+                    }).catch(msg => {
+                        console.log(msg);
+                        res.writeHead(500).end();
+                    });
             }
             else {
+                // no route found, just returns data. If html file, will have already run autoSwapBundles
                 res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
             }
 
         }catch (e) {
-            console.log(e);
+            // fs.readFileSync exception
             res.writeHead(404).end();
         }
     }

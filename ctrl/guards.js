@@ -21,4 +21,8 @@ module.exports = {
         return [currentUserInfo.name, url];        
     },
 
+    registrationGuard: (url, currentUserInfo, currentUserName) => {
+        return [!currentUserName, url];        
+    },
+
 }

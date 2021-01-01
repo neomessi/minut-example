@@ -20,7 +20,7 @@ module.exports = function(rootDir, routes, mongodb) {
         htmlSrcDir: [rootDir, "gui/web/src/html"].join('/'),
         distDir: [rootDir, "gui/web/dist"].join('/'),
         mongodb: mongodb,
-        getCurrentUserPromise: () => this.currentUserPromise,
+        // getCurrentUserPromise: () => this.currentUserPromise,
     };
     
     this.router = new Router(this.globals, routes),
@@ -33,24 +33,28 @@ module.exports = function(rootDir, routes, mongodb) {
 
     this.initDb();
 
-    this.initCurrentUserPromise = (cookies) => {
-        const security = new Security(this.globals.mongodb, cookies);
-        this.currentUserPromise = security.provideCurrentUser();
+    this.initSecurity = (cookies) => {
+        this.security = new Security(this.globals.mongodb, cookies);
     }
+
+    // this.initCurrentUserPromise = (cookies) => {
+    //     const security = new Security(this.globals.mongodb, cookies);
+    //     this.currentUserPromise = security.provideCurrentUser();
+    // }
 
     this.run = () => {
         const port = process.env.PORT || 9876
         const server = https.createServer(options, (req, res) => {
             
             const cookies = new Cookies(req, res, { keys: [process.env.COOKIE_SIGNATURE_PHRASE] });
-            this.initCurrentUserPromise(cookies);
+            this.initSecurity(cookies);
 
             if ( process.env.NODE_ENV !== 'production' ) {
                 console.log('DEV mode: checking bundles @' + new Date().toString());
                 this.initDb();
             }
             
-            this.router.route(this.bundler, req, res);
+            this.router.route(req, res, this.bundler, this.security);
         });
 
         server.listen(port, () => console.log(`Listening on port ${port}...`))

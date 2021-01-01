@@ -1,16 +1,26 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">        
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"><!-- ~*~npm -->
+        <script src="/js/~`bundle:autoComponentRenderer.js`~"></script>
     </head>
-    <body>
-        <h3>User Information</h3>
+    <body>        
+        <section class="section">            
+            <div class="container">
+                <div data-component="Header" data-props='{ "userName": "~`data:userName`~" }'></div>
 
-        <div>~`data:message`~</div><!-- no conditionals by design - for that a better way is to pass in success to a component -->
+                <p class="panel-heading">User Information</p>
 
-        <form method="POST">
-            <label>Username:<input type="text" name="userName" value="~`data:userName`~"/></label><br />
-            <label>Email:<input type="text" name="email" value="~`data:email`~" /></label><br />            
-            <input type="submit" />
-        </form>
+                <div class="message is-success">~`data:message`~</div><!-- no conditionals by design - for that a better way is to pass in success to a component -->
+
+                <form method="POST">
+                    <label>Name:<input type="text" name="fullName" value="~`data:fullName`~"/></label><br />
+                    <label>Email:<input type="text" name="email" value="~`data:email`~" /></label><br />
+                    <input type="submit" class="button is-info" />
+                </form>
+            </div>
+        </section>
     </body>
 </html>

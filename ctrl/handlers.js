@@ -6,11 +6,13 @@
  *  POST requests (you have to have a handler for post, otherwise will error):
  *      to update the current user, just set fields directlry:
  *          consumer.currentUserInfo.email = "a@b.com"
- *      and they will be automatically saved for you.
+ *      and call consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
  *      
  *      Set consumer.nextUrl (if not will just redirect back to page)
  * 
- *  If you need to make updates to other collections, use the mongodb object passed in and return a promise ~*~TBD
+ *  If you need to make updates to other collections, use the mongodb object passed in and return a promise
+ * 
+ *  can make async and await whatever you want, or return nothing.
  */
 
 // const something = require('./lib/something')
@@ -29,29 +31,50 @@ module.exports = {
         consumer.swapData("unit", "{ unit: \"" + unit + "\" }");
     },
 
-    userInfoHandler: (consumer, mdb) => {        
-        if ( consumer.method === 'POST') {            
-            consumer.currentUserInfo.name = consumer.params.form.userName;
+    userInfoHandler: async (consumer, mdb) => {
+        if ( consumer.method === 'POST') {
+            consumer.currentUserInfo.fullName = consumer.params.form.fullName;
             consumer.currentUserInfo.email = consumer.params.form.email;
-            
-            /*            
-            return new Promise(resolve => {                                
+
+            await consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
+            consumer.nextUrl = "/userinfo/?ok=1";
+
+            /*
+            return new Promise(resolve => {
                 // example that would be for other collections:
                 resolve( mdb.collection("users").updateOne(
-                        { curPermitId: ObjectId("5f8cae240c89e900772c48fb") },
+                        { permitId: ObjectId("5f8cae240c89e900772c48fb") },
                         { $set: { "info" : consumer.currentUserInfo } }
                     )
                 ); //, { info: 1}
             })
-            */           
-
-            consumer.nextUrl = "/userinfo/?ok=1"; // consumer.nextUrl = "/start";
+            */
         }
         else {
             consumer.swapData("message", consumer.params.url.ok ? "Updated sucessfully!" : "");
-            consumer.swapData("userName", consumer.currentUserInfo.name ? consumer.currentUserInfo.name : "");
-            consumer.swapData("email", consumer.currentUserInfo.name ? consumer.currentUserInfo.email : "");
+            consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
+            consumer.swapData("fullName", consumer.currentUserInfo.fullName ? consumer.currentUserInfo.fullName : "");
+            consumer.swapData("email", consumer.currentUserInfo.email ? consumer.currentUserInfo.email : "");
         }
+        
     },
+
+    loginHandler: async (consumer) => {
+        if ( consumer.method == 'POST') {
+            await consumer.security.login(consumer.params.form.userName, consumer.params.form.password);
+            consumer.nextUrl = "/userinfo";
+        }
+   },
+
+    logoutHandler: async (consumer) => {
+         await consumer.security.logout();
+    },
+
+    registrationHandler: async (consumer) => {
+        if ( consumer.method == 'POST') {
+            await consumer.security.register(consumer.params.form.userName, consumer.params.form.password);
+            consumer.nextUrl = "/userinfo/?ok=2"; // 2=registered successfully
+        }
+    }
 
 }

@@ -25,6 +25,7 @@ module.exports = {
     },
 
     squareHandler: (consumer) => {
+        consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
         consumer.swapData("num", consumer.params.url.num ? consumer.params.url.num : 0);
 
         const unit = consumer.params.url.unit ? consumer.params.url.unit : 'things';
@@ -72,7 +73,8 @@ module.exports = {
 
     registrationHandler: async (consumer) => {
         if ( consumer.method == 'POST') {
-            await consumer.security.register(consumer.params.form.userName, consumer.params.form.password);
+            const result = await consumer.security.register(consumer.params.form.userName, consumer.params.form.password);
+            console.log(`registrationHandlerResult: ${result}`);
             consumer.nextUrl = "/userinfo/?ok=2"; // 2=registered successfully
         }
     }

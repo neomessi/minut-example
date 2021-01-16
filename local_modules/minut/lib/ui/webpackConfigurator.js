@@ -7,11 +7,9 @@ const path2jsDist = path.join(__dirname, '../../../../gui/web/dist/js');
 
 module.exports = function( entries ) {
 
-    const allEntries = { ...entries, autoComponentRenderer: path.join(__dirname, './autoComponentRenderer.js') };
-
     return {
     mode: 'none', // ~*~
-    entry: allEntries,
+    entry: entries,
     output: {
         filename: '[name].[chunkhash].js',
         path: path2jsDist,

@@ -24,7 +24,7 @@
  *      permitIssuances: [
  *          {
  *              issuanceId: ObjectId,
- *              touched: null,
+ *              touched: null, ~*~created
  *          }
  *      ]
  * } 
@@ -36,7 +36,7 @@ const securityCookieName = 'pid'; // permit id
 const securityCookieIndexName = 'iid'; // permit issuance id
 
 const getCookieExpDate = () => {
-    // ~*~ pid should not expire, just iid
+    // ~*~ pid should not expire(?), just iid
 
     const date = new Date();
     // ~*~ and also for logging in as user - that expiration will be session
@@ -111,13 +111,24 @@ module.exports = function(mongodb, cookies) {
         // logoutAll: () => { } // ~*~ clear pid
 
         register: (un, pw) => {
-            const pid = new ObjectId();
-            const iid = new ObjectId();
-            // ~*~ md5 hash pw
-            return this.mongodb.collection("users").insertOne( {...getNewUserData(pid, iid), userName: un, password: pw})
-                .then(()=> {                    
-                    sendCookies(this.cookies, pid, iid);
-                });
+            const pid = getCurrentUserPermitId(this.cookies);
+            
+            return this.mongodb.collection("users").findOne(
+                { userName: un }
+            ).then((result) => {
+                if ( result) {
+                    throw "exists";
+                }
+            }).then(() => {            
+                // ~*~ md5 hash pw
+                this.mongodb.collection("users").updateOne(
+                    { permitId: ObjectId(pid) },
+                    { $set: { userName: un, password: pw} }
+            )}).then(() => {
+                return "success";
+            }).catch((err) => {
+                return err;
+            });
 
             // ~*~ should return recovery phrase
         },

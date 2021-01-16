@@ -3,9 +3,19 @@ const WebpackConfigurator = require('./local_modules/minut/lib/ui/webpackConfigu
 
 const path2jsSrc = path.join(__dirname, 'gui/web/src/script');
 
+/*
+Components in:
+  gui/web/src/script/components/autoImported
+  
+Are added to _every_ bundle defined here.
+This is for convenience for components you use all the time don't have to manually import
+   Don't put too many components in there though, that will increase your bundle sizes
+*/
+
 module.exports = new WebpackConfigurator({
   //    main: './src/index.js',
   start: path.join(path2jsSrc, 'start.js'),
   //   test: './src/test.js',
+  squareRenderer: path.join(path2jsSrc, 'squareRenderer.js'),
   tstest: path.join(path2jsSrc, 'tstest.ts'), 
 });

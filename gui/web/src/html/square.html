@@ -1,12 +1,14 @@
 <html>
     <head>
-        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css?v=5">
         <script src="/js/~`bundle:squareRenderer.js`~"></script>
     </head>
     <body>
-        <div data-component="Header" data-props='{ "userName": "~`data:userName`~" }'></div>
-        <h3>Squaring component</h3>
-        <div data-component="Square" data-props='{ "number": "~`data:num`~" }'></div>
+        <div class="container">
+            <div data-component="Header" data-props='{ "userName": "~`data:userName`~" }'></div>
+            <h3>Squaring component</h3>
+            <div data-component="Square" data-props='{ "number": "~`data:num`~" }'></div>
+        </div>
     </body>
 </html>
 

@@ -132,7 +132,6 @@ const getHeaderData = (ext) => {
     //~*~ isApi?
     switch (ext) {
         case 'css':
-            // note when dev tools open, bootstrap will make an extra request to bootstrap.min.css.map (won't show in network tab)
             hd = { 'Content-Type': 'text/css', 'Cache-Control': 'max-age=' + eternity }
             break;
 

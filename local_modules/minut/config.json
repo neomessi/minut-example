@@ -1,0 +1,10 @@
+{
+    "Security": {
+        "usersCollectionName": "users",
+        "allowMultipleLogins": true,
+        "UntouchedPermitExpirationMinutes": {
+            "credentialed": 120,
+            "uncredentialed": 129600            
+        }
+    }
+}

@@ -9,16 +9,20 @@
  *      { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '/login') },
  * 
  *      guard without redirect - will simply return 403:
- *      { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard },  
+ *      { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '') },
  * 
+ * All guards receive these params (url is defined above in routes.js):
+ * (url, currentUserInfo, currentUserName)
+ * 
+ * currentUserName is only defined if registered
  */
 
 // const something = require('./lib/something')
 
 module.exports = {
 
-    customGuard: (url, currentUserInfo) => {
-        return [currentUserInfo.name, url];        
+    customGuard: (url, currentUserInfo, currentUserName) => {
+        return [currentUserInfo && currentUserInfo.fullName, url];
     },
 
     registrationGuard: (url, currentUserInfo, currentUserName) => {

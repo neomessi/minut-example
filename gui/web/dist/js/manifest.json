@@ -1,5 +1,6 @@
 {
-  "start.js": "start.bf394f119b1913f91834.js",
-  "squareRenderer.js": "squareRenderer.8803244f20ccf31e28e8.js",
-  "tstest.js": "tstest.8b68a8608cd535e4b844.js"
+  "autoImportsOnlyRenderer.js": "autoImportsOnlyRenderer.a3e9987f4d25efabc44f.js",
+  "squareRenderer.js": "squareRenderer.8dfac19fd1b751882418.js",
+  "start.js": "start.e7a9d3760c375f97fc07.js",
+  "tstest.js": "tstest.d65dd19323c91d03bf62.js"
 }

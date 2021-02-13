@@ -13,9 +13,10 @@ This is for convenience for components you use all the time don't have to manual
 */
 
 module.exports = new WebpackConfigurator({
+  autoImportsOnlyRenderer: path.join(path2jsSrc, 'autoImportsOnlyRenderer.js'),
   //    main: './src/index.js',
   start: path.join(path2jsSrc, 'start.js'),
   //   test: './src/test.js',
   squareRenderer: path.join(path2jsSrc, 'squareRenderer.js'),
-  tstest: path.join(path2jsSrc, 'tstest.ts'), 
+  tstest: path.join(path2jsSrc, 'tstest.ts'),  
 });

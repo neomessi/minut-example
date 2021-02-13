@@ -11,24 +11,28 @@
  *      /gui/web/dist/html --> static* html files (public access) *NOTE: will still do autoswapping bundles
  *      /gui/web/src/html --> html files that: have special mapping/need preprocessing/have restricted access
  * 
- * ~*~TODO:
- * routes that start with /api/ will automatically set the response type to text/json // { url: '/api/info' },
+  * routes that start with /api/ will automatically set the response type to application/json // { url: '/api/info' },
  * api routes don't have page, just url and handler
  */
-// const apiHandlers = require('./apiHandlers')
+const apiHandlers = require('./apiHandlers')
 const handlers = require('./handlers')
 const guards = require('./guards')
 
 module.exports = [    
     { url: '/', page: 'index.html' },
-    { url: '/register', page: 'register.html', handler: handlers.registrationHandler, guard: guards.registrationGuard.bind(null, '/userinfo') },
+    { url: '/register',
+        page: 'register.html',
+        handler: handlers.registrationHandler,
+        guard: guards.registrationGuard.bind(null, '/userinfo')
+    },
     { url: '/login', page: 'login.html', handler: handlers.loginHandler },
     { url: '/logout', page: 'login.html', handler: handlers.logoutHandler },
     { url: '/userinfo', page: 'userinfo.html', handler: handlers.userInfoHandler },
     { url: '/start', page: 'start.html', handler: handlers.customHandler },
-    { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '/userinfo') },
+    { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '') },
     { url: '/square', page: 'square.html', handler: handlers.squareHandler },
 
-    // API routes
-    // { url: '/api/stuff', handler: apiHandlers }
+    // API routes ~*~ guards?
+    { url: '/api/test1', handler: apiHandlers.test1 },
+    { url: '/api/save/prefs', handler: apiHandlers.savePrefs },
 ];

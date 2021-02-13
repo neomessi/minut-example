@@ -20,8 +20,7 @@
 module.exports = {
 
     customHandler: (consumer) => {
-        // consumer.swapData("username", consumer.params.url.name ? consumer.params.url.name : "Sir");
-        consumer.swapData("username", consumer.currentUserInfo.name ? consumer.currentUserInfo.name : "Sir");
+        consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "Sir");
     },
 
     squareHandler: (consumer) => {
@@ -33,7 +32,9 @@ module.exports = {
     },
 
     userInfoHandler: async (consumer, mdb) => {
-        if ( consumer.method === 'POST') {
+        consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
+
+        if ( /post/i.test(consumer.method) ) {
             consumer.currentUserInfo.fullName = consumer.params.form.fullName;
             consumer.currentUserInfo.email = consumer.params.form.email;
 
@@ -53,11 +54,9 @@ module.exports = {
         }
         else {
             consumer.swapData("message", consumer.params.url.ok ? "Updated sucessfully!" : "");
-            consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
             consumer.swapData("fullName", consumer.currentUserInfo.fullName ? consumer.currentUserInfo.fullName : "");
             consumer.swapData("email", consumer.currentUserInfo.email ? consumer.currentUserInfo.email : "");
         }
-        
     },
 
     loginHandler: async (consumer) => {

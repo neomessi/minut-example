@@ -7,7 +7,8 @@ module.exports = function (db) {
 
     this.autoSwapBundles = ( body ) => {
         return body.replace( /~`bundle:(.+?\.js)`~/g, ( match, p1 ) => {
-            return this.getBundle( p1 )
+            var b = this.getBundle( p1 );
+            return b ? b : match;
         } );
     }
 

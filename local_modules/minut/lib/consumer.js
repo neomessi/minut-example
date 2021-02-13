@@ -9,13 +9,15 @@
  * but all of that is handled for you by framework (the permit id is stored in an encrypted cookie)
  *
  * ~*~ should this be outside of lib?
+ * 
+ * ~*~ have baseConsumer that webConsumer and apiConsumer export
  */
 
 module.exports = {
 
     Request: function(method, params) {
         this.method = method;
-        this.params = { url: params, form: { /* supplied later*/ } };
+        this.params = { url: params, form: { /* supplied later */ } };
     },
 
     Response: function(body) {

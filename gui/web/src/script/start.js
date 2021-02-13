@@ -1,11 +1,36 @@
-console.log('starting up... 2:43pm');
+/**
+ * I'm an example of a vanilla js bundle
+ */
 
-const test = (msg) => {
-    console.log(msg);
-}
+// const a = fetch("/api/test1");
+// a.then((b) => {
+//     return b.json();
+// }).then((c) => {
+//     console.log(c.testing);
+// });
 
-// const arr = [2, 4, 6 ,8];
-//const arr2 = [...arr];
-//console.log(arr2);
+window.addEventListener('DOMContentLoaded', (event) => {
 
-test("abc12345");
+    // fetch
+    document.querySelector("#getFavNum").addEventListener("click", async () => {
+        const result = await fetch("/api/test1");
+        const obj = await result.json();
+        document.querySelector("#favNum").value = obj.testing;
+    });
+
+    // post
+    document.querySelector("#setFavNum").addEventListener("click", async () => {
+        const body = new FormData();
+        body.append( "favNum", document.querySelector("#favNum").value );
+
+        const result = await fetch( "/api/save/prefs",
+        {
+            method: "POST",
+            body
+        });
+
+        const obj = await result.json();
+        console.log( obj.result );
+    });
+
+});

@@ -3,8 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"><!-- ~*~npm -->
-        <script src="/js/~`bundle:autoComponentRenderer.js`~"></script>
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css?v=5">
+        <script src="/js/~`bundle:autoImportsOnlyRenderer.js`~"></script>
     </head>
     <body>        
         <section class="section">            
@@ -13,7 +13,7 @@
 
                 <p class="panel-heading">User Information</p>
 
-                <div class="message is-success">~`data:message`~</div><!-- no conditionals by design - for that a better way is to pass in success to a component -->
+                <div class="message is-success">~`data:message`~</div>
 
                 <form method="POST">
                     <label>Name:<input type="text" name="fullName" value="~`data:fullName`~"/></label><br />

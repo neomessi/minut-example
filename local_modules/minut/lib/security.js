@@ -106,7 +106,7 @@ module.exports = function(mongodb, cookies) {
                 setTimeout(()=> {
                     sendCookies(this.cookies);
                     resolve(true);
-                }, 3000 ); // ~*~
+                }, 1000 ); // ~*~
             });
         },
 

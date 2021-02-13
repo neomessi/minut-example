@@ -16,13 +16,23 @@ https://github.com/koajs/koa
 https://github.com/expressjs/express
 
 
+Design decisions
+These things were omitted because they are better handled with components:
+- server side includes
+- conditional display logic
+
+
 TODO:
--api routes GET/POST/etc.
--csrf regular POST
--only send cookies for html requests? !curuserpromise
+-api routes:
+    +GET
+    +POST
+    (PUT/PATCh)
+
 -finish security
-    -account recovery phrase (md5)? gen w/npm words
     -old adminauth idea (impersonation)? apikey in .env, password that changes every time - success or failure
+    (-account recovery phrase (md5)? gen w/npm words
+
+-csrf regular POST
 -config.json as arg to run - have key for dev/prod overwrite defaults
 -tests (minut-example?)
 (regex guards

@@ -1,4 +1,5 @@
 TODO:
+-pass promise a into component, resolve when needed
 -force https
 --hot --watch [idk if need this - want to keep as close to production deploy]
 

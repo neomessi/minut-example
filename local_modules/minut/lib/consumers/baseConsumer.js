@@ -10,7 +10,6 @@
  *
  * ~*~ should this be outside of lib?
  * 
- * ~*~ have baseConsumer that webConsumer and apiConsumer export
  */
 
 module.exports = {
@@ -18,14 +17,6 @@ module.exports = {
     Request: function(method, params) {
         this.method = method;
         this.params = { url: params, form: { /* supplied later */ } };
-    },
-
-    Response: function(body) {
-        this.body = body;
-        this.swapData = (key, val) => {
-            const re = new RegExp("~`data:"+key+"`~", "g");
-            this.body = this.body.replace(re, val);
-        }
     },
 
 }

@@ -17,6 +17,8 @@ exports.parseForm = (req) => {
     let body = '';
     return new Promise(( res) => {
 
+        // ~*~ use https://www.npmjs.com/package/formidable
+
         req.on('data', chunk => {
             // console.log( "chunk: " + chunk.toString() );
             // body += chunk.toString();

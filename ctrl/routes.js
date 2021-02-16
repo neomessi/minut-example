@@ -15,8 +15,8 @@
  * api routes don't have page, just url and handler
  */
 const apiHandlers = require('./apiHandlers')
-const handlers = require('./handlers')
 const guards = require('./guards')
+const handlers = require('./handlers')
 
 module.exports = [    
     { url: '/', page: 'index.html' },
@@ -32,7 +32,7 @@ module.exports = [
     { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '') },
     { url: '/square', page: 'square.html', handler: handlers.squareHandler },
 
-    // API routes ~*~ guards?
-    { url: '/api/test1', handler: apiHandlers.test1 },
+    // API routes
+    { url: '/api/test1', handler: apiHandlers.test1, guard: guards.loggedInGuard.bind(null, '') },
     { url: '/api/save/prefs', handler: apiHandlers.savePrefs },
 ];

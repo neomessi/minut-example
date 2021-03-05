@@ -36,6 +36,7 @@ TODO:
 -config.json as arg to run - have key for dev/prod overwrite defaults
 -tests (minut-example?)
 (regex guards
+(Wrap promise around mysql db calls (for rdbms use laravel?)
 
 SEPARATE PROJECTS?:
 -tommy-tools/dwimform (local_modules) w/redux "a provider you register reducers with"

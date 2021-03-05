@@ -1,7 +1,10 @@
 /**
- * All functions in here must return an array with first element boolean.
- * Second (optional) array element is url to redirect to if false
- *      return[bool, url]
+ * All functions in here must return an object:
+ *
+ * {
+ *   requirement: <required condition>,
+ *   redirect: <url if required condition not met> (optional)
+ * }
  * 
  * If passed url param on failure will redirect to there, else will just send a 403
  * Pass in routes.js like this:
@@ -22,15 +25,24 @@
 module.exports = {
 
     customGuard: (url, currentUserInfo, currentUserName) => {
-        return [currentUserInfo && currentUserInfo.fullName, url];
+        return {
+            requirement: currentUserInfo && currentUserInfo.fullName,
+            redirect: url
+        }
     },
 
     loggedInGuard: (url, currentUserInfo, currentUserName) => {
-        return [currentUserName, url];        
+        return {
+            requirement: currentUserName,
+            redirect: url
+        }
     },
 
     registrationGuard: (url, currentUserInfo, currentUserName) => {
-        return [!currentUserName, url];        
+        return {
+            requirement: !currentUserName,
+            redirect: url
+        }
     },
 
 }

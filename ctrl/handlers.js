@@ -12,7 +12,7 @@
  * 
  *  If you need to make updates to other collections, use the mongodb object passed in and return a promise
  * 
- *  can make async and await whatever you want, or return nothing.
+ *  can make async (post handlers) and await whatever you want, or return nothing.
  */
 
 // const something = require('./lib/something')
@@ -31,32 +31,32 @@ module.exports = {
         consumer.swapData("unit", "{ unit: \"" + unit + "\" }");
     },
 
-    userInfoHandler: async (consumer, mdb) => {
+    userInfoHandler: (consumer, mdb) => {
+        consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
+        consumer.swapData("message", consumer.params.url.ok ? "Updated sucessfully!" : "");
+        consumer.swapData("fullName", consumer.currentUserInfo.fullName ? consumer.currentUserInfo.fullName : "");
+        consumer.swapData("email", consumer.currentUserInfo.email ? consumer.currentUserInfo.email : "");
+    },
+
+    userInfoPostHandler: async (consumer, mdb) => {
         consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
 
-        if ( /post/i.test(consumer.method) ) {
-            consumer.currentUserInfo.fullName = consumer.params.form.fullName;
-            consumer.currentUserInfo.email = consumer.params.form.email;
+        consumer.currentUserInfo.fullName = consumer.params.form.fullName;
+        consumer.currentUserInfo.email = consumer.params.form.email;
 
-            await consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
-            consumer.nextUrl = "/userinfo/?ok=1";
+        await consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
+        consumer.nextUrl = "/userinfo/?ok=1";
 
-            /*
-            return new Promise(resolve => {
-                // example that would be for other collections:
-                resolve( mdb.collection("users").updateOne(
-                        { permitId: ObjectId("5f8cae240c89e900772c48fb") },
-                        { $set: { "info" : consumer.currentUserInfo } }
-                    )
-                ); //, { info: 1}
-            })
-            */
-        }
-        else {
-            consumer.swapData("message", consumer.params.url.ok ? "Updated sucessfully!" : "");
-            consumer.swapData("fullName", consumer.currentUserInfo.fullName ? consumer.currentUserInfo.fullName : "");
-            consumer.swapData("email", consumer.currentUserInfo.email ? consumer.currentUserInfo.email : "");
-        }
+        /*
+        return new Promise(resolve => {
+            // example that would be for other collections:
+            resolve( mdb.collection("users").updateOne(
+                    { permitId: ObjectId("5f8cae240c89e900772c48fb") },
+                    { $set: { "info" : consumer.currentUserInfo } }
+                )
+            ); //, { info: 1}
+        })
+        */
     },
 
     loginHandler: async (consumer) => {

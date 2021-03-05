@@ -13,6 +13,8 @@
  * 
   * routes that start with /api/ will automatically set the response type to application/json // { url: '/api/info' },
  * api routes don't have page, just url and handler
+ *
+ * You can just specify one handler for all request methods or specify get/post handlers
  */
 const apiHandlers = require('./apiHandlers')
 const guards = require('./guards')
@@ -27,7 +29,7 @@ module.exports = [
     },
     { url: '/login', page: 'login.html', handler: handlers.loginHandler },
     { url: '/logout', page: 'login.html', handler: handlers.logoutHandler },
-    { url: '/userinfo', page: 'userinfo.html', handler: handlers.userInfoHandler },
+    { url: '/userinfo', page: 'userinfo.html', handler: { get: handlers.userInfoHandler, post: handlers.userInfoPostHandler } },
     { url: '/start', page: 'start.html', handler: handlers.customHandler },
     { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '') },
     { url: '/square', page: 'square.html', handler: handlers.squareHandler },

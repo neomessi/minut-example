@@ -144,6 +144,9 @@ module.exports = function(mongodb, cookies) {
 
         // ~*~ should this be in separate file? CurrentUser.js? getUserName, getInfo, saveInfo
         saveCurrentUserInfo: ( info ) => {
+            // ~*~ just fill here? no call this one setCurrentUserInfo and have separate fill func that calls util func
+            // security shouldn't do anything with info, just permit, etc.
+            // just passes current user id to user.js function
             let pid = getCurrentUserPermitId(this.cookies);
 
             return this.mongodb.collection("users").updateOne(
@@ -164,6 +167,7 @@ module.exports = function(mongodb, cookies) {
         let usingPermitId = getCurrentUserPermitId(this.cookies);
         let usingPermitIndex = getCurrentUserPermitIndex(this.cookies);        
 
+        // again, this calls user.js function
         return this.mongodb.collection("users").findOne( { permitId: ObjectId(usingPermitId) })
             .then((user) => {
                 if (!user) {

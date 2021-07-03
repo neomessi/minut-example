@@ -2,6 +2,8 @@
  * 
  */
 
+ const utils = require('../utils');
+
 module.exports = function (
     res,
     globals,
@@ -23,9 +25,19 @@ module.exports = function (
             currentUserPermitId = currentUser.permitId;                        
             const cuinfo = currentUser.info ? currentUser.info : {};
             
+            const cnsmr = {
+                ...consumerRequest,
+                ...consumerResponse,
+                currentUserInfo: { ...cuinfo },
+                currentUserName: currentUser.userName,
+                security: {...security.consumerFuncs},
+                utils: {...utils.consumerFuncs}
+            };
+
+
             // check guards
             if ( route.guard ) {
-                const { requirement, redirect } = route.guard(cuinfo, currentUser.userName);
+                const { requirement, redirect } = route.guard(cnsmr, globals.mongodb);
                 if ( !requirement ) {
                     if ( redirect ) {
                         res.writeHead(302, { Location: redirect } ).end();
@@ -33,14 +45,6 @@ module.exports = function (
                     res.writeHead(403).end();    
                 }
             }
-
-            const cnsmr = {
-                ...consumerRequest,
-                ...consumerResponse,
-                currentUserInfo: { ...cuinfo },
-                currentUserName: currentUser.userName,
-                security: {...security.consumerFuncs}
-            };
 
             if ( /post/i.test(consumerRequest.method ) ) {
                 formDataPromise.then( (formdata) => { // avoided "pyramid of doom", but have to take just one step of doom
@@ -75,7 +79,7 @@ module.exports = function (
                 Promise.resolve(p).then(( data ) => {            
 
                     if ( consumerResponse.body ) {
-                        // ~*~ put back
+                        // ~*~ put back(?)
                         // var errmsg = getSomethingUnswappedError(consumerResponse.body);
                         // if ( errmsg ) {
                         //     res.writeHead(500).end(errmsg);

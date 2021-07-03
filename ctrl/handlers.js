@@ -19,11 +19,11 @@
 
 module.exports = {
 
-    customHandler: (consumer) => {
+    customHandler: (consumer, mdb) => {
         consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "Sir");
     },
 
-    squareHandler: (consumer) => {
+    squareHandler: (consumer, mdb) => {
         consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
         consumer.swapData("num", consumer.params.url.num ? consumer.params.url.num : 0);
 
@@ -41,8 +41,11 @@ module.exports = {
     userInfoPostHandler: async (consumer, mdb) => {
         consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
 
-        consumer.currentUserInfo.fullName = consumer.params.form.fullName;
-        consumer.currentUserInfo.email = consumer.params.form.email;
+        // consumer.currentUserInfo.fullName = consumer.params.form.fullName;
+        // consumer.currentUserInfo.email = consumer.params.form.email;
+
+        // console.log( Object.entries(consumer.params.form ));
+        consumer.utils.fillObject( consumer.currentUserInfo, consumer.params.form, ["email", "fullName"] );
 
         await consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
         consumer.nextUrl = "/userinfo/?ok=1";
@@ -59,18 +62,18 @@ module.exports = {
         */
     },
 
-    loginHandler: async (consumer) => {
+    loginHandler: async (consumer, mdb) => {
         if ( consumer.method == 'POST') {
             await consumer.security.login(consumer.params.form.userName, consumer.params.form.password);
             consumer.nextUrl = "/userinfo";
         }
    },
 
-    logoutHandler: async (consumer) => {
+    logoutHandler: async (consumer, mdb) => {
          await consumer.security.logout();
     },
 
-    registrationHandler: async (consumer) => {
+    registrationHandler: async (consumer, mdb) => {
         if ( consumer.method == 'POST') {
             const result = await consumer.security.register(consumer.params.form.userName, consumer.params.form.password);
             console.log(`registrationHandlerResult: ${result}`);

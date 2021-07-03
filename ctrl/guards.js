@@ -3,7 +3,7 @@
  *
  * {
  *   requirement: <required condition>,
- *   redirect: <url if required condition not met> (optional)
+ *   redirect: <url if required condition not met, optional> (use empty string to make optional)
  * }
  * 
  * If passed url param on failure will redirect to there, else will just send a 403
@@ -14,33 +14,36 @@
  *      guard without redirect - will simply return 403:
  *      { url: '/sensitive', page: 'sensitive.html', guard: guards.customGuard.bind(null, '') },
  * 
- * All guards receive these params (url is defined above in routes.js):
- * (url, currentUserInfo, currentUserName)
+ * Most of the time you will just pass along the url defined in route, like this:
+ *   redirect: url
+ * However you can override with whatever you want.
  * 
- * currentUserName is only defined if registered
+ * All guards receive these params (url is defined above in routes.js):
+ * (url, consumer, mdb)
+ * 
  */
 
 // const something = require('./lib/something')
 
 module.exports = {
 
-    customGuard: (url, currentUserInfo, currentUserName) => {
+    customGuard: (url, consumer, mdb) => {
         return {
-            requirement: currentUserInfo && currentUserInfo.fullName,
+            requirement: consumer.currentUserInfo && consumer.currentUserInfo.fullName,
             redirect: url
         }
     },
 
-    loggedInGuard: (url, currentUserInfo, currentUserName) => {
+    loggedInGuard: (url, consumer, mdb) => {
         return {
-            requirement: currentUserName,
+            requirement: consumer.currentUserName,
             redirect: url
         }
     },
 
-    registrationGuard: (url, currentUserInfo, currentUserName) => {
+    registrationGuard: (url, consumer, mdb) => {
         return {
-            requirement: !currentUserName,
+            requirement: !consumer.currentUserName,
             redirect: url
         }
     },

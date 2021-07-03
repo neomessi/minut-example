@@ -11,7 +11,7 @@
  *      /gui/web/dist/html --> static* html files (public access) *NOTE: will still do autoswapping bundles
  *      /gui/web/src/html --> html files that: have special mapping/need preprocessing/have restricted access
  * 
-  * routes that start with /api/ will automatically set the response type to application/json // { url: '/api/info' },
+ * routes that start with /api/ will automatically set the response type to application/json // { url: '/api/info' },
  * api routes don't have page, just url and handler
  *
  * You can just specify one handler for all request methods or specify get/post handlers

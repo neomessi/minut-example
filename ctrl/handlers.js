@@ -4,9 +4,10 @@
  * Within a handler:
  *  GET requests shouldn't return anything.
  *  POST requests (you have to have a handler for post, otherwise will error):
- *      to update the current user, just set fields directlry:
+ *      to update the current user, can just set fields directlry:
  *          consumer.currentUserInfo.email = "a@b.com"
- *      and call consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
+ *      and call consumer.security.saveCurrentUserInfo(consumer);
+ *      (there are also other ways of doing this - see example below)
  *      
  *      Set consumer.nextUrl (if not will just redirect back to page)
  * 
@@ -41,18 +42,29 @@ module.exports = {
     userInfoPostHandler: async (consumer, mdb) => {
         consumer.swapData("userName", consumer.currentUserName ? consumer.currentUserName : "");
 
+        // Four ways to save current user info:
+
+        // 1) overwriting consumer.currentUserInfo with new object:
+        // const infoCopy = { ...consumer.currentUserInfo };
+        // infoCopy.fullName = consumer.params.form.fullName;
+        // infoCopy.email = consumer.params.form.email;
+        // await consumer.security.setCurrentUserInfo(infoCopy);
+
+        // 2) setting consumer.currentUserInfo fields manually and saving:
         // consumer.currentUserInfo.fullName = consumer.params.form.fullName;
         // consumer.currentUserInfo.email = consumer.params.form.email;
+        // await consumer.security.saveCurrentUserInfo(consumer);
 
-        // console.log( Object.entries(consumer.params.form ));
-        consumer.utils.fillObject( consumer.currentUserInfo, consumer.params.form, ["email", "fullName"] );
+        // 3) using convenience function for copying form fields in consumer object:
+        await consumer.security.saveFormFieldsToCurrentUserInfo( consumer, ["email", "fullName"] );
 
-        await consumer.security.saveCurrentUserInfo(consumer.currentUserInfo);
-        consumer.nextUrl = "/userinfo/?ok=1";
+        // 4) usning the utils function (this is really intended saving other collections than user):
+        // consumer.utils.fillObject( consumer.currentUserInfo, consumer.params.form, ["email", "fullName"] );
+        // await consumer.security.setCurrentUserInfo(consumer.currentUserInfo);
 
+        // Additional example that would be for saving other collections:
         /*
         return new Promise(resolve => {
-            // example that would be for other collections:
             resolve( mdb.collection("users").updateOne(
                     { permitId: ObjectId("5f8cae240c89e900772c48fb") },
                     { $set: { "info" : consumer.currentUserInfo } }
@@ -60,6 +72,7 @@ module.exports = {
             ); //, { info: 1}
         })
         */
+        consumer.nextUrl = "/userinfo/?ok=1";
     },
 
     loginHandler: async (consumer, mdb) => {

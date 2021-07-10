@@ -11,10 +11,12 @@ currentUser: {
 }
 
 security: {
-    login(),
-    logout(),
-    register,
-    saveCurrentUserInfo~*~?
+    login: function,
+    logout: function,
+    register: function,
+    setCurrentUserInfo: function(Object), // overwrites
+    saveCurrentUserInfo: function(consumer),
+    saveFormFieldsToCurrentUserInfo: function(consumer, Array?),
 }
 
 request: {

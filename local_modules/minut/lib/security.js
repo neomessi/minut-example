@@ -33,6 +33,7 @@
  * if don't pass iid or not recreate pid?
  */
 const ObjectId = require('mongodb').ObjectId;
+const utils = require('./utils');
 
 const securityCookieName = 'pid'; // permit id
 const securityCookieIndexName = 'iid'; // permit issuance id
@@ -70,6 +71,22 @@ const sendCookies = (cookies, pid, iid) => {
 module.exports = function(mongodb, cookies) {
     this.mongodb = mongodb;
     this.cookies = cookies;
+
+    // private but has access to this scope
+    const updateCurrentUserInfo = ( info ) => {
+        const pid = getCurrentUserPermitId(this.cookies);
+
+        return this.mongodb.collection("users").updateOne(
+                    { permitId: ObjectId(pid) },
+                    { $set: { "info" : info } })
+
+                    // ~*~ below didn't work for some reason
+                    // if ( result.matchedCount == 1 ) {
+                    //     console.log("update success!");
+                    // }else{
+                    //     throw "update FAILED!"
+                    // }
+    }
 
     // all consumerFuncs return promise
     this.consumerFuncs = {
@@ -132,34 +149,21 @@ module.exports = function(mongodb, cookies) {
                 return err;
             });
 
-            // ~*~ should return recovery phrase
+            // ~*~ should return recovery phrase(?)
         },
 
-        // getCurrentUserName: () => {
-        //     let usingPermitId = getCurrentUserPermitId(this.cookies);
-        //     return this.mongodb.collection("users").findOne( { permitId: ObjectId(usingPermitId) }, { userName: 1 }); // ~*~ grr why doesn't it only return userName?
-        // }
-
-        // login(un, pw)
-
-        // ~*~ should this be in separate file? CurrentUser.js? getUserName, getInfo, saveInfo
-        saveCurrentUserInfo: ( info ) => {
-            // ~*~ just fill here? no call this one setCurrentUserInfo and have separate fill func that calls util func
-            // security shouldn't do anything with info, just permit, etc.
-            // just passes current user id to user.js function
-            let pid = getCurrentUserPermitId(this.cookies);
-
-            return this.mongodb.collection("users").updateOne(
-                        { permitId: ObjectId(pid) },
-                        { $set: { "info" : info } })
-
-                        // ~*~ below didn't work for some reason                              
-                        // if ( result.matchedCount == 1 ) {
-                        //     console.log("update success!");
-                        // }else{
-                        //     throw "update FAILED!"
-                        // }
+        setCurrentUserInfo: ( info ) => {
+            updateCurrentUserInfo( info );
         },
+
+        saveCurrentUserInfo: ( cnsmr ) => {
+            updateCurrentUserInfo( cnsmr.currentUserInfo );
+        },
+
+        saveFormFieldsToCurrentUserInfo: ( cnsmr, fillable ) => {
+            utils.consumerFuncs.fillObject( cnsmr.currentUserInfo, cnsmr.params.form, fillable );
+            updateCurrentUserInfo( cnsmr.currentUserInfo );
+        }
 
     }
 

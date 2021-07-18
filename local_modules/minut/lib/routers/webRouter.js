@@ -6,14 +6,13 @@ const processRoute = require('./baseRouter')
 const consumer = require('../consumers/webConsumer')
 
 module.exports = function (
-    res,
-    globals,
-    consumerRequest,
-    formDataPromise,
-    route,    
-    security,
     bundler,
-    fpath ) {
+    res,
+    route,
+    globals,
+    fpath,
+    ...rest
+    ) {
 
     const haveRoute = Object.keys(route).length > 0;
     let resource = fpath;
@@ -41,15 +40,13 @@ module.exports = function (
             const consumerResponse = new consumer.Response(subdata);
 
             processRoute (
-                res,
-                globals,
-                consumerRequest,
-                consumerResponse,
-                formDataPromise,
                 getHeaderData.bind( null, resourceExt ),
-                route,                
-                security,                
-                fpath );                
+                res,
+                route,
+                globals,
+                fpath,
+                ...rest,
+                consumerResponse, );
 
         }
         else {

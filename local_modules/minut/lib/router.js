@@ -33,22 +33,25 @@ module.exports = function( globals, routes ) {
         if ( isApi ) {
             processApiRoute(
                 res,
+                usingRoute,
                 this.globals,
-                consumerRequest,                
+                "",
+                security,
                 formDataPromise,
-                usingRoute,                
-                security);
+                consumerRequest,
+            );
         }
         else {
             processWebRoute(
-                res,
-                this.globals,
-                consumerRequest,                
-                formDataPromise,
-                usingRoute,                
-                security,
                 bundler,
-                fpath );
+                res,
+                usingRoute,
+                this.globals,
+                fpath,
+                security,
+                formDataPromise,
+                consumerRequest,
+            );
         }
 
     }

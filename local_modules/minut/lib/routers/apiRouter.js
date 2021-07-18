@@ -5,11 +5,8 @@ const processRoute = require('./baseRouter')
 
 module.exports = function (
     res,
-    globals,
-    consumerRequest,                
-    formDataPromise,
-    route,    
-    security) {
+    route,
+    ...rest ) {
     
     if ( Object.keys(route).length == 0 ) {    
         res.writeHead(404).end();
@@ -17,15 +14,12 @@ module.exports = function (
     }
 
     processRoute (
-        res,
-        globals,
-        consumerRequest,
-        {},
-        formDataPromise,
         getHeaderData,
+        res,
         route,        
-        security,
-        "" );
+        ...rest,
+        {},
+        );
 }
 
 const getHeaderData = () => {

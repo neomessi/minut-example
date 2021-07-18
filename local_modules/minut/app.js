@@ -15,17 +15,26 @@ const options = {
 
 module.exports = function(rootDir, routes, mongodb) {
 
-    this.globals = {
-        rootDir: rootDir,
-        htmlSrcDir: [rootDir, "gui/web/src/html"].join('/'),
-        distDir: [rootDir, "gui/web/dist"].join('/'),
-        mongodb: mongodb,
-        // getCurrentUserPromise: () => this.currentUserPromise,
+    const distDir = [rootDir, "gui/web/dist"].join('/');
+    const htmlSrcDir = [rootDir, "gui/web/src/html"].join('/');
 
-        handleErrorResponse: function(errmsg, consumerResponse) {
-            consumerResponse.body = fs.readFileSync([rootDir, "gui/web/src/html", "error.html"].join('/'), "utf8");
+    this.globals = {
+        ...{
+            rootDir,
+            htmlSrcDir,
+            distDir,
+            mongodb,
+        },
+        handleErrorResponse: function(errmsg, errpath, consumerResponse) {
+            consumerResponse.body = fs.readFileSync([htmlSrcDir, "error.html"].join('/'), "utf8");
             consumerResponse.swapData("error", process.env.NODE_ENV !== 'production' ? errmsg : "Please try back later.");
-            //~*~ log if prod to DB
+            if ( /production/i.test(process.env.NODE_ENV) ) {
+                mongodb.collection("errors").insertOne({
+                    what: errmsg,
+                    when: new Date(),
+                    where: errpath,
+                });
+            }
             return consumerResponse.body;
         }
     };
@@ -43,11 +52,6 @@ module.exports = function(rootDir, routes, mongodb) {
     this.initSecurity = (cookies) => {
         this.security = new Security(this.globals.mongodb, cookies);
     }
-
-    // this.initCurrentUserPromise = (cookies) => {
-    //     const security = new Security(this.globals.mongodb, cookies);
-    //     this.currentUserPromise = security.provideCurrentUser();
-    // }
 
     this.run = () => {
         const port = process.env.PORT || 9876
@@ -68,5 +72,3 @@ module.exports = function(rootDir, routes, mongodb) {
     }    
 
 }
-
-// this.logger = () { if ( dev || !suppressOutput ) }

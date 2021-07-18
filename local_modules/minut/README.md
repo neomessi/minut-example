@@ -112,8 +112,6 @@ Configuration options can be found in config.json
   Internal notes/to do list
 =============================
 
--error logging
-
 -share validation client/server?
 
 -api routes:

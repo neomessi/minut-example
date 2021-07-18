@@ -59,7 +59,7 @@ module.exports = function (
                     try {
                         p = getHandler(route.handler, "post")( cnsmr, globals.mongodb );
                     } catch(e) {
-                        globals.handleErrorResponse(`POST HANDLER ${e}`, consumerResponse);
+                        globals.handleErrorResponse(`POST HANDLER ${e}`, fpath, consumerResponse);
                         res.writeHead(500).end(consumerResponse.body);
                         return;
                     }
@@ -86,7 +86,7 @@ module.exports = function (
                 try {
                     p = route.handler ? getHandler(route.handler, "get")( cnsmr, globals.mongodb ) : null;
                 } catch(e) {
-                    globals.handleErrorResponse(`GET HANDLER ${e}`, consumerResponse);
+                    globals.handleErrorResponse(`GET HANDLER ${e}`, fpath, consumerResponse);
                     res.writeHead(500).end(consumerResponse.body);
                     return;
                 }

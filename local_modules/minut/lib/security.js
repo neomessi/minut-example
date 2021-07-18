@@ -161,7 +161,7 @@ module.exports = function(mongodb, cookies) {
         },
 
         saveFormFieldsToCurrentUserInfo: ( cnsmr, fillable ) => {
-            utils.consumerFuncs.fillObject( cnsmr.currentUserInfo, cnsmr.params.form, fillable );
+            utils.consumerFuncs.fillObject( cnsmr.currentUserInfo, cnsmr.request.params.form, fillable );
             updateCurrentUserInfo( cnsmr.currentUserInfo );
         }
 

@@ -4,7 +4,7 @@ module.exports = {
     savePrefs: async ( consumer ) => {
         console.log( consumer );
 
-        consumer.currentUserInfo.favNum = consumer.params.form.favNum;
+        consumer.currentUserInfo.favNum = consumer.request.params.form.favNum;
         await consumer.security.setCurrentUserInfo(consumer.currentUserInfo);
         return '{ "result": "success" }';
     },

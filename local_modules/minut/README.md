@@ -1,9 +1,11 @@
-A minimum utility Node framework for modern apps that sets up in a minute.
+A minimum utility Node framework for modern web applications that sets up in a minute.
 
-Currently only supports React and MongoDB.
+Currently supports only React and MongoDB.
 
 
--- backend --
+============
+  Backend
+============
 
 The main concept is that in your application you define:
 - your routes in routes.js
@@ -12,14 +14,16 @@ The main concept is that in your application you define:
 
 All your handler and guard functions are passed a "Consumer" object as well as the global MongoDB that you can optionally use.
 This is how you interface with the framework (you're a consumer of the framework).
-All consumer methods are defined in consumer.d.ts.
+All consumer methods are defined in a section below.
 
 Session state is handled for you! There are built-in security functions in the Consumer to handle login/logout etc.
 
 The consumer object provides access to the current user via: consumer.currentUserInfo
 
 
--- frontend --
+=============
+  Frontend
+=============
 
 The framework relies on folder conventions to find your html/css/js.
 
@@ -33,7 +37,7 @@ And that's it! But that's just the default - you can also customize your js bund
 
 But you can also pass parameters into your component via data-props attribute.
 
-You can also customize your js bunldes in subdirectories to reduce the size of the file.
+You can also split your js bundles in subdirectories to reduce the size of the file.
 
 
 -- passing data from backned to frontend --
@@ -46,7 +50,7 @@ In your handler:
 In your html it will output the swapped message:
     <div>~`data:message`~</div>
 
-This is also one way you pass data into your components:
+This is also one way you can pass data into your components:
     <div data-component="YourComponent" data-props='{ "userName": "~`data:userName`~" }'></div>
 
 That's it. Note these things were _omitted_ because it is the author's opinion they are better handled with components:
@@ -54,8 +58,45 @@ That's it. Note these things were _omitted_ because it is the author's opinion t
 - server side includes
 
 
+=======================
+  Consumer object API
+=======================
 
-== implementation notes ==
+currentUser: {
+    currentUserName,  // note: password purposely not exposed (handled by framework)
+    currentUserInfo: { /* your info here */ },
+}
+
+request: {
+    method,
+    params: {
+        url: {},
+        form: {}
+    };
+}
+
+response: {
+    body
+    swapData(key, val)
+}
+
+security: {
+    login(un, pw)
+    logout()
+    register(un, pw)
+    setCurrentUserInfo({})
+    saveCurrentUserInfo(consumer)
+    saveFormFieldsToCurrentUserInfo(cnsmr, fillable)
+}
+
+utils: {
+    fillObject(obj, fields, fillable)
+}
+
+
+========================
+  Implementation notes
+========================
 
 Expects the following to be defined in process.env:
     You can use this package: https://www.npmjs.com/package/dotenv
@@ -67,10 +108,12 @@ DB_CON_STR #mongo only supported
 Configuration options can be found in config.json
 
 
+=============================
+  Internal notes/to do list
+=============================
 
-== internal notes/to do list ==
+-error logging
 
-TODO:
 -share validation client/server?
 
 -api routes:
@@ -94,7 +137,8 @@ SEPARATE PROJECTS?:
 -tommy-tools/dwimform (local_modules) w/redux "a provider you register reducers with"
 -paging {$qlimit}/{$qoffset}
 
-Look at:
+
+Influences:
 https://github.com/hapijs/hapi
 https://github.com/koajs/koa
     https://github.com/koajs/koa/pull/1494/commits/387d6fb09b555333258a40760636050f545dfd7b

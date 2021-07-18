@@ -21,8 +21,15 @@ module.exports = function(rootDir, routes, mongodb) {
         distDir: [rootDir, "gui/web/dist"].join('/'),
         mongodb: mongodb,
         // getCurrentUserPromise: () => this.currentUserPromise,
+
+        handleErrorResponse: function(errmsg, consumerResponse) {
+            consumerResponse.body = fs.readFileSync([rootDir, "gui/web/src/html", "error.html"].join('/'), "utf8");
+            consumerResponse.swapData("error", process.env.NODE_ENV !== 'production' ? errmsg : "Please try back later.");
+            //~*~ log if prod to DB
+            return consumerResponse.body;
+        }
     };
-    
+
     this.router = new Router(this.globals, routes),
     
     this.initDb = () => {

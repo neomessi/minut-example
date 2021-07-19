@@ -24,6 +24,8 @@ Currently supports only React and MongoDB.
     openssl req -nodes -new -x509 -keyout localserver.key -out localserver.cert
 
 - run:
+    npm install --save-dev
+    npm run build # you will also re-run this anyytime you change js files
     npm run dev
 
 - Go to (it only runs https):

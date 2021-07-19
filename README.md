@@ -18,17 +18,17 @@ Currently supports only React and MongoDB.
 
 1. create an .env file:
     > COOKIE_SIGNATURE_PHRASE=makeup something here using multiple words
-    > DB_CON_STR=mongodb+srv://web:rest of your string
+    > DB_CON_STR=mongodb connection string
     > DB_NAME=your collection name
 
-1. create local certs
+1. create local certs  
     something like:  
     `openssl req -nodes -new -x509 -keyout localserver.key -out localserver.cert`
 
 1. run:
-    1. npm install --save-dev
-    1. npm run build # you will also re-run this anyytime you change js files
-    1. npm run dev
+    1. `npm install --save-dev`
+    1. `npm run build # you will also re-run this anytime you change js files`
+    1. `npm run dev`
 
 1. Go to (it only runs https):
     https://localhost:9876/
@@ -58,7 +58,9 @@ js bundles are handled for you (via Webpack) - just drop your components in:
 `yourapp\gui\web\src\script\components\autoImported`
 
 and in your html:
-> <div data-component="YourComponent"></div>
+```
+<div data-component="YourComponent"></div>
+```
 
 And that's it! But that's just the default - you can also customize your js bundles easily.
 
@@ -67,7 +69,7 @@ But you can also pass parameters into your component via data-props attribute.
 You can also split your js bundles in subdirectories to reduce the size of the file.
 
 
-###### passing data from backned to frontend
+###### Passing data from backned to frontend
 
 This is done via the Consumer swapData method.
 
@@ -75,10 +77,14 @@ In your handler:
 `consumer.swapData("message", "Hi there!");`
 
 In your html it will output the swapped message:  
-> <div>\~``data:message``\~</div>
+```
+<div>~`data:message`~</div>
+```
 
 This is also one way you can pass data into your components:  
-> <div data-component="YourComponent" data-props='{ "userName": "~`data:userName`~" }'></div>
+```
+<div data-component="YourComponent" data-props='{ "userName": "~`data:userName`~" }'></div>
+```
 
 That's it. Note these things were _omitted_ because it is the author's opinion they are better handled with components:
 - conditional display logic
@@ -177,29 +183,29 @@ Configuration options can be found in config.json*
 
 
 ## Influences:
+* https://github.com/expressjs/express
 * https://github.com/hapijs/hapi
 * https://github.com/koajs/koa
-* https://github.com/expressjs/express
 * Web Development with Node & Express, Brown
 
 
 ## Internal notes/to do list
 
-- [] share validation client/server?  
+- [ ] share validation client/server?  
   minut.data.json include regex?
 
-- [] api routes:
+- [ ] api routes:
     - [x] GET
     - [x] POST
-    - [] (PUT/PATCH)
+    - [ ] (PUT/PATCH)
 
-- [] tests for consumer functions
-- [] config.json as arg to run - have key for dev/prod overwrite defaults
-- [] force https
+- [ ] tests for consumer functions
+- [ ] config.json as arg to run - have key for dev/prod overwrite defaults
+- [ ] force https
 
-- [] vue, MySql support (Wrap promise around mysql db calls)
+- [ ] vue, MySql support (Wrap promise around mysql db calls)
 
-- [] SEPARATE PROJECTS?:
+- [ ] SEPARATE PROJECTS?:
   - tommy-tools/dwimform (local_modules) w/redux "a provide3. you register reducers with"
   - paging
   - admin auth idea (impersonation)? apikey in .env, password that changes every time - success or failure

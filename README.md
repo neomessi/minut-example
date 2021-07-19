@@ -19,9 +19,9 @@ Currently supports only React and MongoDB.
     DB_CON_STR=mongodb+srv://web:rest of your string
     DB_NAME=your collection name
 
-- create local certs:
-    localserver.cert
-    localserver.key
+- create local certs
+    something like:
+    openssl req -nodes -new -x509 -keyout localserver.key -out localserver.cert
 
 - run:
     npm run dev

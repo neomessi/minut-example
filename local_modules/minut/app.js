@@ -17,6 +17,7 @@ module.exports = function(rootDir, routes, mongodb) {
 
     const distDir = [rootDir, "gui/web/dist"].join('/');
     const htmlSrcDir = [rootDir, "gui/web/src/html"].join('/');
+    const errorFileContent = fs.readFileSync([htmlSrcDir, "error.html"].join('/'), "utf8");
 
     this.globals = {
         ...{
@@ -26,7 +27,7 @@ module.exports = function(rootDir, routes, mongodb) {
             mongodb,
         },
         handleErrorResponse: function(errmsg, errpath, consumerResponse) {
-            consumerResponse.body = fs.readFileSync([htmlSrcDir, "error.html"].join('/'), "utf8");
+            consumerResponse.body = errorFileContent;
             consumerResponse.swapData("error", process.env.NODE_ENV !== 'production' ? errmsg : "Please try back later.");
             if ( /production/i.test(process.env.NODE_ENV) ) {
                 mongodb.collection("errors").insertOne({

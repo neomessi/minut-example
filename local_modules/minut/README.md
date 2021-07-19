@@ -3,9 +3,30 @@ A minimum utility Node framework for modern web applications that sets up in a m
 Currently supports only React and MongoDB.
 
 
-============
-  Backend
-============
+=================
+  Prerequisites
+=================
+
+- Recent version of Node
+- MongoDB account
+
+
+=========
+  Setup
+=========
+
+- Easiest to just clone the example repo: https://github.com/neomessi/minut-example
+  (then you can delete the .git folder and reinit if you want)
+
+- create an .env file in root:
+    COOKIE_SIGNATURE_PHRASE=<makeup something here using multiple words>
+    DB_CON_STR=mongodb+srv://web:<rest of your string>
+    DB_NAME=<your collection name>
+
+
+================================
+  Framework explained: Backend
+================================
 
 The main concept is that in your application you define:
 - your routes in routes.js
@@ -21,9 +42,9 @@ Session state is handled for you! There are built-in security functions in the C
 The consumer object provides access to the current user via: consumer.currentUserInfo
 
 
-=============
-  Frontend
-=============
+=================================
+  Framework explained: Frontend
+=================================
 
 The framework relies on folder conventions to find your html/css/js.
 
@@ -81,16 +102,24 @@ response: {
 }
 
 security: {
+    // all these functions return promises:
     login(un, pw)
     logout()
     register(un, pw)
     setCurrentUserInfo({})
     saveCurrentUserInfo(consumer)
-    saveFormFieldsToCurrentUserInfo(cnsmr, fillable)
+    saveFormFieldsToCurrentUserInfo(cnsmr, fillable) // see below utils.fillObject
 }
 
 utils: {
     fillObject(obj, fields, fillable)
+    /**
+     * 
+     * @param {object} obj represents Mongo document
+     * @param {object} fields form fields (key/value pairs)
+     * @param {array} fillable indicates which form fields (keys) to populate in object (simliar to Laravel)
+     * @param {boolean} convertFields if true, will change form field names first_name or FirstName to firstName
+     */
 }
 
 
@@ -105,7 +134,9 @@ Expects the following to be defined in process.env:
 COOKIE_SIGNATURE_PHRASE #used for signing httpOnly cookies - if change this all cookies will be invalidated
 DB_CON_STR #mongo only supported
 
-Configuration options can be found in config.json
+Configuration options can be found in config.json*
+
+*This is a WIP and config options may/may not be honored and defaults may be used.
 
 
 =============================
@@ -117,15 +148,15 @@ Configuration options can be found in config.json
 -api routes:
     +GET
     +POST
-    (PUT/PATCh)
+    (PUT/PATCH)
 
 -finish security
     -old adminauth idea (impersonation)? apikey in .env, password that changes every time - success or failure
     (-account recovery phrase (md5)? gen w/npm words
 
--csrf regular POST
--config.json as arg to run - have key for dev/prod overwrite defaults
 -tests for consumer functions
+-config.json as arg to run - have key for dev/prod overwrite defaults
+(csrf regular POST (maybe let consumer handle this)
 (regex guards
 (Wrap promise around mysql db calls (for rdbms use laravel?)
 

@@ -53,14 +53,13 @@ module.exports = function (
                 formDataPromise.then( (formdata) => { // avoided "pyramid of doom", but have to take just one step of doom
 
                     consumerRequest.params.form = formdata;
-                    // ~*~ csrf check (npm)                                
 
                     // if no handler will be caught and return 500 (should have handler defined for POST)
 
                     try {
                         p = getHandler(route.handler, "post")( cnsmr, globals.mongodb );
                     } catch(e) {
-                        globals.handleErrorResponse(`POST HANDLER ${e}`, fpath, consumerResponse);
+                        globals.handleErrorResponse(formatError('POST', e), fpath, consumerResponse);
                         res.writeHead(500).end(consumerResponse.body);
                         return;
                     }
@@ -87,7 +86,8 @@ module.exports = function (
                 try {
                     p = route.handler ? getHandler(route.handler, "get")( cnsmr, globals.mongodb ) : null;
                 } catch(e) {
-                    globals.handleErrorResponse(`GET HANDLER ${e}`, fpath, consumerResponse);
+                    console.log(e);
+                    globals.handleErrorResponse(formatError('GET', e), fpath, consumerResponse);
                     res.writeHead(500).end(consumerResponse.body);
                     return;
                 }
@@ -118,3 +118,5 @@ module.exports = function (
 }
 
 const getHandler = ( x, key ) => typeof x === "function" ? x : x[key];
+
+const formatError = ( method, e ) => `${method} Handler:<br/>${e.stack}`;

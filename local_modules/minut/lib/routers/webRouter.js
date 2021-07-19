@@ -51,12 +51,6 @@ module.exports = function (
         }
         else {
             // no route found, just returns data. If html file, will have already run autoSwapBundles
-            if ( isHtml ) {
-                var errmsg = getSomethingUnswappedError(subdata);
-                if ( errmsg ) {
-                    res.writeHead(500).end(errmsg);
-                }
-            }
             res.writeHead(200, getHeaderData(resourceExt)).end(subdata);
         }
 
@@ -90,17 +84,4 @@ const getHeaderData = (ext) => {
         
     }
     return hd;
-}
-
-const getSomethingUnswappedError = (body) => {
-    var a = /~`(bundle|data):(\w+)/.exec(body);
-    if ( a ) {
-        switch (a[1]) {
-            case "bundle":
-                return `Bundle "${a[2]}" could not be swapped out. You may need to add it to webpack.config.js.`;
-            case "data":
-                return `Data "${a[2]}" could not be swapped out. Your handler may need to be updated.`;
-        }
-    }
-    return "";
 }

@@ -86,7 +86,6 @@ module.exports = function (
                 try {
                     p = route.handler ? getHandler(route.handler, "get")( cnsmr, globals.mongodb ) : null;
                 } catch(e) {
-                    console.log(e);
                     globals.handleErrorResponse(formatError('GET', e), fpath, consumerResponse);
                     res.writeHead(500).end(consumerResponse.body);
                     return;
@@ -96,11 +95,12 @@ module.exports = function (
                 Promise.resolve(p).then(( data ) => {            
 
                     if ( consumerResponse.body ) {
-                        // ~*~ put back(?)
-                        // var errmsg = getSomethingUnswappedError(consumerResponse.body);
-                        // if ( errmsg ) {
-                        //     res.writeHead(500).end(errmsg);
-                        // }                        
+                        const errmsg = getSomethingUnswappedError(consumerResponse.body);
+                        if ( errmsg ) {
+                            globals.handleErrorResponse(formatError('GET', errmsg), fpath, consumerResponse);
+                            res.writeHead(500).end(consumerResponse.body);
+                            return;
+                        }
                         res.writeHead(200, getHeaderData()).end( consumerResponse.body );
                     }
                     else {
@@ -119,4 +119,17 @@ module.exports = function (
 
 const getHandler = ( x, key ) => typeof x === "function" ? x : x[key];
 
-const formatError = ( method, e ) => `${method} Handler:<br/>${e.stack}`;
+const formatError = ( method, e ) => `${method} error:<br/>${e.stack || e}`;
+
+const getSomethingUnswappedError = (body) => {
+    var a = /~`(bundle|data):(\w+)/.exec(body);
+    if ( a ) {
+        switch (a[1]) {
+            case "bundle":
+                return `Bundle "${a[2]}" could not be swapped out. You may need to add it to webpack.config.js.`;
+            case "data":
+                return `Data "${a[2]}" could not be swapped out. Your handler may need to be updated.`;
+        }
+    }
+    return "";
+}

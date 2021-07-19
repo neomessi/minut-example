@@ -17,9 +17,9 @@ Currently supports only React and MongoDB.
   (then you can delete the .git folder and reinit if you want)
 
 1. create an .env file:
-    > COOKIE_SIGNATURE_PHRASE=makeup something here using multiple words
-    > DB_CON_STR=mongodb connection string
-    > DB_NAME=your collection name
+    > COOKIE_SIGNATURE_PHRASE=makeup something here using multiple words  
+    > DB_CON_STR=mongodb+srv://web:rest of your string  
+    > DB_NAME=your collection name  
 
 1. create local certs  
     something like:  

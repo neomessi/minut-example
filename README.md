@@ -1,5 +1,3 @@
-
-
 A minimum utility Node framework for modern web applications that sets up in a minute.
 
 Currently supports only React and MongoDB.
@@ -17,9 +15,19 @@ Currently supports only React and MongoDB.
   (then you can delete the .git folder and reinit if you want)
 
 - create an .env file:
-    COOKIE_SIGNATURE_PHRASE=<makeup something here using multiple words>
-    DB_CON_STR=mongodb+srv://web:<rest of your string>
-    DB_NAME=<your collection name>
+    COOKIE_SIGNATURE_PHRASE=makeup something here using multiple words
+    DB_CON_STR=mongodb+srv://web:rest of your string
+    DB_NAME=your collection name
+
+- create local certs:
+    localserver.cert
+    localserver.key
+
+- run:
+    npm run dev
+
+- Go to (it only runs https):
+    https://localhost:9876/
 
 
 # Framework explained: Backend

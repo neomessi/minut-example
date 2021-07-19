@@ -1,6 +1,6 @@
 /**
  * users collection:
- * ~*~ create mongoose model/typescript type
+ * ~*~ create mongoose model
  * {
  *      // user id, not exposed (permit id is used instead)
  *      _id,
@@ -12,7 +12,7 @@
  * 
  *      // anything in info will be exposed as consumer.currentUserInfo, here is where you can put name, email, etc.
  *      // and also any application-defined security roles (isAdmin, etc.) *
- *      // ~*~  custom merge function can be passed in to handle how info is merged when guest logs in
+ *      // ~*~  TBD: custom merge function can be passed in to handle how info is merged when guest logs in
  *      //      (default to dismissing guest info and just pulling registered info)
  *      info: {},
  * 
@@ -32,6 +32,8 @@
  * extra security measures:
  * if don't pass iid or not recreate pid?
  */
+ const crypto = require('crypto')
+
 const ObjectId = require('mongodb').ObjectId;
 const utils = require('./utils');
 
@@ -43,8 +45,8 @@ const getCookieExpDate = () => {
 
     const date = new Date();
     // ~*~ and also for logging in as user - that expiration will be session
-    // date.setDate(date.getDate() + 90); // ~*~ config
-    date.setMinutes(date.getMinutes() + 2); // ~*~ testing
+    date.setDate(date.getDate() + 90); // ~*~ config
+    // date.setMinutes(date.getMinutes() + 2); // testing
 
     return date;
 }
@@ -67,6 +69,8 @@ const sendCookies = (cookies, pid, iid) => {
     cookies.set(securityCookieName, usingPermitId, { signed: true, overwrite: true, expires: getCookieExpDate() })
            .set(securityCookieIndexName, usingPermitIndex, { signed: true, overwrite: true, expires: getCookieExpDate() })
 }
+
+const convertPassword = (pwd) => crypto.createHash('md5').update(pwd).digest("hex");
 
 module.exports = function(mongodb, cookies) {
     this.mongodb = mongodb;
@@ -93,8 +97,7 @@ module.exports = function(mongodb, cookies) {
 
         login: (un, pw) => {
             // ~*~ have to call merge function
-            // ~*~ md5 unhash pw
-            return this.mongodb.collection("users").findOne( { userName: un, password: pw } )
+            return this.mongodb.collection("users").findOne( { userName: un, password: convertPassword(pw) } )
             .then((user) => {
                 if (!user) {
                     throw "invalid";
@@ -112,7 +115,7 @@ module.exports = function(mongodb, cookies) {
                 sendCookies(this.cookies, validuser.permitId, iid);
             })
             .catch((msg) => {
-                console.log("INVALID login"); // ~*~ do something?
+                throw msg;
             })
         },
 
@@ -120,10 +123,8 @@ module.exports = function(mongodb, cookies) {
             console.log("security logout...");
             // ~*~ pull iid
             return new Promise((resolve)=>{
-                setTimeout(()=> {
-                    sendCookies(this.cookies);
-                    resolve(true);
-                }, 1000 ); // ~*~
+                sendCookies(this.cookies);
+                resolve(true);
             });
         },
 
@@ -138,15 +139,14 @@ module.exports = function(mongodb, cookies) {
                 if ( result) {
                     throw "exists";
                 }
-            }).then(() => {            
-                // ~*~ md5 hash pw
+            }).then(() => {
                 this.mongodb.collection("users").updateOne(
                     { permitId: ObjectId(pid) },
-                    { $set: { userName: un, password: pw} }
+                    { $set: { userName: un, password: convertPassword(pw)} }
             )}).then(() => {
                 return "success";
             }).catch((err) => {
-                return err;
+                throw err;
             });
 
             // ~*~ should return recovery phrase(?)
@@ -171,7 +171,7 @@ module.exports = function(mongodb, cookies) {
         let usingPermitId = getCurrentUserPermitId(this.cookies);
         let usingPermitIndex = getCurrentUserPermitIndex(this.cookies);        
 
-        // again, this calls user.js function
+        // again, this could call user.js function?
         return this.mongodb.collection("users").findOne( { permitId: ObjectId(usingPermitId) })
             .then((user) => {
                 if (!user) {

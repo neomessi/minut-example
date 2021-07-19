@@ -77,8 +77,13 @@ module.exports = {
 
     loginHandler: async (consumer, mdb) => {
         if ( consumer.request.method == 'POST') {
-            await consumer.security.login(consumer.request.params.form.userName, consumer.request.params.form.password);
-            consumer.nextUrl = "/userinfo";
+            try {
+                await consumer.security.login(consumer.request.params.form.userName, consumer.request.params.form.password);
+                consumer.nextUrl = "/userinfo";
+            }catch(e) {
+                console.log("invalid login");
+                consumer.nextUrl = "/login";
+            }
         }
    },
 
@@ -88,9 +93,13 @@ module.exports = {
 
     registrationHandler: async (consumer, mdb) => {
         if ( consumer.request.method == 'POST') {
-            const result = await consumer.security.register(consumer.request.params.form.userName, consumer.request.params.form.password);
-            console.log(`registrationHandlerResult: ${result}`);
-            consumer.nextUrl = "/userinfo/?ok=2"; // 2=registered successfully
+            try {
+                const result = await consumer.security.register(consumer.request.params.form.userName, consumer.request.params.form.password);
+                consumer.nextUrl = "/userinfo/?ok=2"; // 2=registered successfully
+            }catch(e) {
+                console.log("registration failed");
+                consumer.nextUrl = "/userinfo";
+            }
         }
     }
 

@@ -1,15 +1,7 @@
 module.exports = function (db) {
     this.db = db;
 
-    this.getBundle = (key) => {
-        return this.db.get(key).value();
-    };
+    this.getBundle = (key) => this.db.get(key).value();
 
-    this.autoSwapBundles = ( body ) => {
-        return body.replace( /~`bundle:(.+?\.js)`~/g, ( match, p1 ) => {
-            var b = this.getBundle( p1 );
-            return b ? b : match;
-        } );
-    }
-
-}
+    this.autoSwapBundles = (body) => body.replace(/~`bundle:(.+?\.js)`~/g, (match, p1) => this.getBundle(p1) || match);
+};

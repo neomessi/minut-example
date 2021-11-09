@@ -1,20 +1,19 @@
-const Cookies = require('cookies')
-const FileSync = require('lowdb/adapters/FileSync')
+const Cookies = require('cookies');
+const FileSync = require('lowdb/adapters/FileSync');
 const fs = require('fs');
-const https = require("https")
-const low = require('lowdb')
+const https = require('https');
+const low = require('lowdb');
 
-const Bundler = require('./lib/bundler')
-const Router = require('./lib/router')
-const Security = require('./lib/security')
+const Bundler = require('./lib/bundler');
+const Router = require('./lib/router');
+const Security = require('./lib/security');
 
 const options = {
     key: fs.readFileSync('localserver.key'),
-    cert: fs.readFileSync('localserver.cert')
-  };
+    cert: fs.readFileSync('localserver.cert'),
+};
 
-module.exports = function(rootDir, routes, mongodb) {
-
+module.exports = function (rootDir, routes, mongodb) {
     const distDir = [rootDir, "gui/web/dist"].join('/');
     const htmlSrcDir = [rootDir, "gui/web/src/html"].join('/');
     const errorFileContent = fs.readFileSync([htmlSrcDir, "error.html"].join('/'), "utf8");
@@ -26,10 +25,11 @@ module.exports = function(rootDir, routes, mongodb) {
             distDir,
             mongodb,
         },
-        handleErrorResponse: function(errmsg, errpath, consumerResponse) {
+        handleErrorResponse: (errmsg, errpath, consumerResponse) => {
+            /* eslint no-param-reassign: ["error", { "props": false }] */
             consumerResponse.body = errorFileContent;
             consumerResponse.swapData("error", process.env.NODE_ENV !== 'production' ? errmsg : "Please try back later.");
-            if ( /production/i.test(process.env.NODE_ENV) ) {
+            if (/production/i.test(process.env.NODE_ENV)) {
                 mongodb.collection("errors").insertOne({
                     what: errmsg,
                     when: new Date(),
@@ -37,13 +37,13 @@ module.exports = function(rootDir, routes, mongodb) {
                 });
             }
             return consumerResponse.body;
-        }
+        },
     };
 
-    this.router = new Router(this.globals, routes),
-    
+    this.router = new Router(this.globals, routes);
+
     this.initDb = () => {
-        var adapter = new FileSync(this.globals.rootDir + '/gui/web/dist/js/manifest.json')
+        const adapter = new FileSync(`${this.globals.rootDir}/gui/web/dist/js/manifest.json`);
         this.db = low(adapter);
         this.bundler = new Bundler(this.db);
     };
@@ -52,24 +52,22 @@ module.exports = function(rootDir, routes, mongodb) {
 
     this.initSecurity = (cookies) => {
         this.security = new Security(this.globals.mongodb, cookies);
-    }
+    };
 
     this.run = () => {
-        const port = process.env.PORT || 9876
+        const port = process.env.PORT || 9876;
         const server = https.createServer(options, (req, res) => {
-            
             const cookies = new Cookies(req, res, { keys: [process.env.COOKIE_SIGNATURE_PHRASE] });
             this.initSecurity(cookies);
 
-            if ( process.env.NODE_ENV !== 'production' ) {
-                console.log('DEV mode: checking bundles @' + new Date().toString());
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`DEV mode: checking bundles @' ${new Date().toString()}`);
                 this.initDb();
             }
-            
+
             this.router.route(req, res, this.bundler, this.security);
         });
 
-        server.listen(port, () => console.log(`Listening on port ${port}...`))
-    }    
-
-}
+        server.listen(port, () => console.log(`Listening on port ${port}...`));
+    };
+};

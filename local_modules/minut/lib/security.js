@@ -34,7 +34,7 @@
  */
 const crypto = require('crypto');
 
-const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb'); // Will look in your project's node_modules for this
 const utils = require('./utils');
 
 const securityCookieName = 'pid'; // permit id
@@ -113,8 +113,8 @@ module.exports = function (mongodb, cookies) {
                 );
                 sendCookies(this.cookies, validuser.permitId, iid);
             })
-            .catch((msg) => {
-                throw msg;
+            .catch((e) => {
+                throw e;
             }),
 
         // ~*~ pull iid
@@ -142,8 +142,8 @@ module.exports = function (mongodb, cookies) {
                 );
             })
                 .then(() => 'success')
-                .catch((err) => {
-                    throw err;
+                .catch((e) => {
+                    throw e;
                 });
         },
 
@@ -165,7 +165,7 @@ module.exports = function (mongodb, cookies) {
     this.provideCurrentUser = () => {
         let usingPermitId = getCurrentUserPermitId(this.cookies);
         let usingPermitIndex = getCurrentUserPermitIndex(this.cookies);
-        const newUserData = getNewUserData(usingPermitId, usingPermitIndex);
+        let newUserData = {};
 
         // again, this could call user.js function?
         return this.mongodb.collection('users').findOne({ permitId: ObjectId(usingPermitId) })
@@ -174,21 +174,12 @@ module.exports = function (mongodb, cookies) {
                     throw new Error('missing');
                 }
                 return user;
-            }).catch((reason) => {
-                // console.log(reason);
-                switch (reason) {
+            }).catch((e) => {
+                switch (e.message) {
                 case 'missing':
                     usingPermitId = new ObjectId();
                     usingPermitIndex = new ObjectId();
-
-                    // return this.mongodb.collection('users').insertOne( {
-                    //             permitId: usingPermitId,
-                    //             permitIssuances: [{ issuanceId: usingPermitIndex, touched: new Date() }],
-                    //             info: {},
-                    //     }).then(()=> {
-                    //         // could just return struct
-                    //         return this.mongodb.collection('users').findOne( { permitId: ObjectId(usingPermitId) })
-                    //     });
+                    newUserData = getNewUserData(usingPermitId, usingPermitIndex);
 
                     this.mongodb.collection('users').insertOne(newUserData);
                     return newUserData; // no need to wait around

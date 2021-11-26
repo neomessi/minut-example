@@ -2,12 +2,8 @@
  * I'm an example of a vanilla js bundle
  */
 
-// const a = fetch("/api/test1");
-// a.then((b) => {
-//     return b.json();
-// }).then((c) => {
-//     console.log(c.testing);
-// });
+// see comment in \minut-example\local_modules\minut\lib\ui\webpackConfigurator.js regarding this import (@babel/preset-env)
+// import "regenerator-runtime/runtime"; // for async/await
 
 window.addEventListener('DOMContentLoaded', (event) => {
 

@@ -30,27 +30,20 @@ module.exports = function (globals, routes) {
 
         const usingRoute = ifound >= 0 ? this.routes[ifound] : {};
 
+        const routerArgs = [
+            res,
+            usingRoute,
+            this.globals,
+            isApi ? '' : fpath,
+            security,
+            formDataPromise,
+            consumerRequest,
+        ];
+
         if (isApi) {
-            processApiRoute(
-                res,
-                usingRoute,
-                this.globals,
-                '',
-                security,
-                formDataPromise,
-                consumerRequest,
-            );
+            processApiRoute(...routerArgs);
         } else {
-            processWebRoute(
-                bundler,
-                res,
-                usingRoute,
-                this.globals,
-                fpath,
-                security,
-                formDataPromise,
-                consumerRequest,
-            );
+            processWebRoute(bundler, ...routerArgs);
         }
     };
 };

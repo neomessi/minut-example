@@ -1,5 +1,7 @@
 const path = require('path');
-const WebpackConfigurator = require('./local_modules/minut/lib/ui/webpackConfigurator')  // ~*~ will change to node_modules
+
+// you can use this file as a template and customize
+const WebpackConfigurator = require('./local_modules/minut/lib/ui/webpackConfigurator');
 
 const path2jsSrc = path.join(__dirname, 'gui/web/src/script');
 
@@ -7,9 +9,10 @@ const path2jsSrc = path.join(__dirname, 'gui/web/src/script');
 Components in:
   gui/web/src/script/components/autoImported
   
-Are added to _every_ bundle defined here.
-This is for convenience for components you use all the time don't have to manually import
-   Don't put too many components in there though, that will increase your bundle sizes
+Are added to every bundle here that use autoComponentRenderer's render function.
+
+This is for convenience for components you use all the time so don't have to manually import them.
+Don't put too many components in there though, that will increase your bundle sizes.
 */
 
 module.exports = new WebpackConfigurator({

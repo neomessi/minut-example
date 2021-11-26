@@ -1,5 +1,6 @@
 /**
- * Auto renders any components in the /gui/web/src/script/components directory
+ * Auto renders any components in the /gui/web/src/script/components directory plus any you components pass in.
+ *
  * In your .html file, to render a component, e.g., Square.jsx, do this:
  *     <div data-component="Square"></div>
  *
@@ -17,6 +18,7 @@
  *      wait for dom loaded and pass them into this function
  */
 
+// Will look in your project's node_modules for these
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Vue from 'vue';
@@ -24,7 +26,7 @@ import Vue from 'vue';
 /* eslint-disable-next-line */
 import * as autoComps from '../../../../gui/web/src/script/components/autoImported'; // linter doesn't understand wildcard import
 
-export default (importedComponents) => {
+export default (importedComponents) => { // ~*~ includeAutoimportedComponents = true
     const allImportedComponents = { ...importedComponents, ...autoComps };
 
     /* eslint-disable-next-line */

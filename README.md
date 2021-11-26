@@ -1,5 +1,5 @@
 # Minut.js
-A minimum utility Node framework for modern web applications that sets up in a minute.
+A purely functional Node framework for modern web applications that sets up in a minute.
 
 Currently supports only React and MongoDB.
 
@@ -199,11 +199,11 @@ Configuration options can be found in config.json*
     - [x] POST
     - [ ] (PUT/PATCH)
 
-- [ ] tests for consumer functions
+- [ ] tests for consumer functions Jest, /test.html
 - [ ] config.json as arg to run - have key for dev/prod overwrite defaults
 - [ ] force https
 
-- [ ] vue, MySql support (Wrap promise around mysql db calls)
+- [ ] MySql support (Wrap promise around mysql db calls)
 
 - [ ] SEPARATE PROJECTS?:
   - tommy-tools/dwimform (local_modules) w/redux "a provide3. you register reducers with"

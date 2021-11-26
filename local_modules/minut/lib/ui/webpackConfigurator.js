@@ -1,17 +1,15 @@
 const path = require('path');
 
-/* eslint-disable */
-// disabling dependency errors because this file is a template for your project
+// This file is a template for your project (assumes your project will have these)
 const ManifestPlugin = require('webpack-manifest-plugin')
 const NotifierPlugin = require('webpack-notifier');
 const { VueLoaderPlugin } = require('vue-loader')
-/* eslint-enable */
 
 const path2jsDist = path.join(__dirname, '../../../../gui/web/dist/js');
 
 module.exports = function (entries) {
     return {
-        mode: "production",
+        mode: 'production',
         entry: entries,
         output: {
             filename: '[name].[chunkhash].js',
@@ -46,7 +44,7 @@ module.exports = function (entries) {
                                         and import specific polyfills needed in your bundles (or entire @babel/polyfill)
                                         */
                                         targets: {
-                                            node: "current",
+                                            node: 'current',
                                         },
                                     },
                                 ],

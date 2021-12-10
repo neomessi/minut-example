@@ -1,5 +1,5 @@
 # Minut.js
-A purely functional Node framework for modern web applications that sets up in a minute.
+An intuitive Node framework for modern web applications that sets up in a minute.
 
 Currently supports only React and MongoDB.
 

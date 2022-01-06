@@ -180,32 +180,3 @@ DB_CON_STR #mongo only supported
 Configuration options can be found in config.json*
 
 *This is a WIP and config options may/may not be honored and defaults may be used.
-
-
-## Influences:
-* https://github.com/expressjs/express
-* https://github.com/hapijs/hapi
-* https://github.com/koajs/koa
-* Web Development with Node & Express, Brown
-
-
-## Internal notes/to do list
-
-- [ ] share validation client/server?  
-  minut.data.json include regex?
-
-- [ ] api routes:
-    - [x] GET
-    - [x] POST
-    - [ ] (PUT/PATCH)
-
-- [ ] tests for consumer functions Jest, /test.html
-- [ ] config.json as arg to run - have key for dev/prod overwrite defaults
-- [ ] force https
-
-- [ ] MySql support (Wrap promise around mysql db calls)
-
-- [ ] SEPARATE PROJECTS?:
-  - tommy-tools/dwimform (local_modules) w/redux "a provide3. you register reducers with"
-  - paging
-  - admin auth idea (impersonation)? apikey in .env, password that changes every time - success or failure

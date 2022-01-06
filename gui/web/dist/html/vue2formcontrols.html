@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Vue vs. React</title>
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    </head>
+    <body>
+        <section class="section">            
+            <div class="container">
+                <div id="app">
+                    <label>Click here to see                        
+                        <input type="checkbox"
+                            v-on:click="handleSetViewDisclaimerImplicit"
+                        >
+                        <!-- v-on:click="viewDisclaimer=$event.target.checked" -->
+                        <!-- v-on:click="handleSetViewDisclaimerImplicit" -->
+                        <!-- v-on:click="handleSetViewDisclaimerImplicitArrow" -->
+                    </label>
+                    
+                    <p v-if="viewDisclaimer">No guarantees</p>
+                    
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
+
+<script>
+    new Vue({
+            el: '#app',
+            data: { viewDisclaimer: false },
+            methods: { 
+                handleSetViewDisclaimerImplicit: function(e) {
+                    console.log(this); // vue object
+                    this.viewDisclaimer=e.target.checked;
+                },
+                handleSetViewDisclaimerImplicitArrow: (e) => {
+                    console.log(this); // window
+                    this.viewDisclaimer=e.target.checked; // sets window.viewDisclaimer
+                }
+            }            
+    });
+</script>
